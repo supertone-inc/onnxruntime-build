@@ -1,6 +1,6 @@
 # Import info for 32-bit Qemu based build
 # There are also raspberry pi 4 and 64-bit images available so adjust as required
-FROM balenalib/raspberrypi3-python:latest-stretch-build
+FROM balenalib/raspberrypi3-64-python:latest-stretch-build
 
 ARG ONNXRUNTIME_REPO=https://github.com/Microsoft/onnxruntime
 ARG ONNXRUNTIME_SERVER_BRANCH=master
@@ -42,7 +42,7 @@ RUN sudo make install
 # Set up build args
 ARG BUILDTYPE=MinSizeRel
 # if doing a 64-bit build change '--arm' to '--arm64'
-ARG BUILDARGS="--config ${BUILDTYPE} --arm"
+ARG BUILDARGS="--config ${BUILDTYPE} --arm64"
 
 # Prepare onnxruntime Repo
 WORKDIR /code
