@@ -1,10 +1,10 @@
 #!/bin/bash
 
-# Reference: https://github.com/microsoft/onnxruntime/blob/v1.7.0/BUILD.md#Cross-compiling-on-Linux
+# Reference: https://onnxruntime.ai/docs/how-to/build/inferencing#cross-compiling-on-linux
 
 set -e
 
-VERSION=1.7.0
+VERSION=1.8.1
 OS=linux
 ARCH=arm64
 BUILD_DIR=./build/onnxruntime-$OS-$ARCH
@@ -15,7 +15,7 @@ cmake \
     -S . \
     -B $BUILD_DIR \
     -DVERSION=$VERSION \
-    -DONNX_CUSTOM_PROTOC_EXECUTABLE="$(pwd)/protoc-3.11.2-linux-x86_64/bin/protoc" \
+    -DONNX_CUSTOM_PROTOC_EXECUTABLE="$(pwd)/protoc-3.16.0-linux-x86_64/bin/protoc" \
     -DCMAKE_TOOLCHAIN_FILE="$(pwd)/tool.cmake" \
     -Donnxruntime_BUILD_SHARED_LIB=ON \
     -Donnxruntime_BUILD_UNIT_TESTS=OFF \

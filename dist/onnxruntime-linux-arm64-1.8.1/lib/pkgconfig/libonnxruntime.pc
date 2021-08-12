@@ -1,0 +1,13 @@
+prefix=/usr/local
+bindir=${prefix}/bin
+mandir=${prefix}/
+docdir=${prefix}/
+libdir=${prefix}/lib
+includedir=${prefix}/include/onnxruntime-build
+
+Name: onnxruntime-build
+Description: ONNX runtime
+URL: https://github.com/microsoft/onnxruntime-build
+Version: 1.8.1
+Libs: -L${libdir} -lonnxruntime-build
+Cflags: -I${includedir}
