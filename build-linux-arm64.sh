@@ -15,7 +15,6 @@ cmake \
     -S . \
     -B $BUILD_DIR \
     -DVERSION=$VERSION \
-    -DONNX_CUSTOM_PROTOC_EXECUTABLE="$(pwd)/protoc-3.16.0-linux-x86_64/bin/protoc" \
     -DCMAKE_TOOLCHAIN_FILE="$(pwd)/tool.cmake" \
     -Donnxruntime_BUILD_SHARED_LIB=ON \
     -Donnxruntime_BUILD_UNIT_TESTS=OFF \
