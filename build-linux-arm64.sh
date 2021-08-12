@@ -1,10 +1,10 @@
 #!/bin/bash
 
-# Reference: https://github.com/microsoft/onnxruntime/blob/v1.6.0/BUILD.md#cross-compiling-on-linux
+# Reference: https://github.com/microsoft/onnxruntime/blob/v1.7.0/BUILD.md#Cross-compiling-on-Linux
 
 set -e
 
-VERSION=1.6.0
+VERSION=1.7.0
 OS=linux
 ARCH=arm64
 BUILD_DIR=./build/onnxruntime-$OS-$ARCH
