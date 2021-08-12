@@ -9,13 +9,11 @@ OS=linux
 ARCH=arm64
 BUILD_DIR=./build/onnxruntime-$OS-$ARCH
 INSTALL_DIR=./dist/onnxruntime-$OS-$ARCH-$VERSION
-PATH="$(pwd)/gcc-arm-10.3-2021.07-x86_64-aarch64-none-linux-gnu/bin:$PATH"
 
 cmake \
     -S . \
     -B $BUILD_DIR \
     -DVERSION=$VERSION \
-    -DCMAKE_TOOLCHAIN_FILE="$(pwd)/tool.cmake" \
     -Donnxruntime_BUILD_SHARED_LIB=ON \
     -Donnxruntime_BUILD_UNIT_TESTS=OFF \
     -DCMAKE_BUILD_TYPE=MinSizeRel
