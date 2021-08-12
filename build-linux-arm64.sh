@@ -2,17 +2,16 @@
 
 # Reference: https://github.com/microsoft/onnxruntime/blob/v1.6.0/BUILD.md#cross-compiling-on-linux
 
-ONNXRUNTIME_TAG=v1.6.0
+VERSION=1.6.0
 OS=linux
 ARCH=arm64
-TARGET=$OS-$ARCH
-CLONE_DIR=./onnxruntime-$ONNXRUNTIME_TAG
-BUILD_DIR=./build/onnxruntime-$TARGET-$ONNXRUNTIME_TAG
-INSTALL_DIR=./dist/onnxruntime-$TARGET-$ONNXRUNTIME_TAG
+CLONE_DIR=./onnxruntime-$VERSION
+BUILD_DIR=./build/onnxruntime-$OS-$ARCH-$VERSION
+INSTALL_DIR=./dist/onnxruntime-$OS-$ARCH-$VERSION
 
 export PATH="$(pwd)/gcc-arm-10.3-2021.07-x86_64-aarch64-none-linux-gnu/bin:$PATH"
 
-git clone --branch $ONNXRUNTIME_TAG --single-branch --recursive --shallow-submodules https://github.com/Microsoft/onnxruntime $CLONE_DIR
+git clone --branch v$VERSION --single-branch --recursive --shallow-submodules https://github.com/Microsoft/onnxruntime $CLONE_DIR
 
 cmake \
     -S $CLONE_DIR/cmake \
