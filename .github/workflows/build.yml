@@ -31,6 +31,13 @@ jobs:
           ${{ runner.temp }}/onnxruntime-emscripten-wasm32-${{ github.sha }}.tgz
           .
 
+      - name: Upload Artifact
+        if: github.event_name != 'release'
+        uses: actions/upload-artifact@v3
+        with:
+          name: onnxruntime-emscripten-wasm32-${{ github.sha }}
+          path: ${{ runner.temp }}/*.tgz
+
       - name: Archive Release
         if: github.event_name == 'release'
         working-directory: build/emscripten-wasm32
@@ -39,11 +46,12 @@ jobs:
           ${{ runner.temp }}/onnxruntime-emscripten-wasm32-${{ github.event.release.tag_name }}.tgz
           .
 
-      - name: Upload Artifact
+      - name: Upload Release Artifact
+        if: github.event_name == 'release'
         uses: actions/upload-artifact@v3
         with:
-          name: onnxruntime-emscripten-wasm32
-          path: ${{ runner.temp }}/*
+          name: onnxruntime-emscripten-wasm32-${{ github.event.release.tag_name }}
+          path: ${{ runner.temp }}/*.tgz
 
   release:
     name: Release
