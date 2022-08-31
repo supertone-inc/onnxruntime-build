@@ -15,7 +15,7 @@ source ./onnxruntime/cmake/external/emsdk/emsdk_env.sh
     --parallel \
     --enable_wasm_threads
 
-BUILD_DIR=./build/onnxruntime-emscripten-wasm32
+BUILD_DIR=./build/emscripten-wasm32
 INCLUDE_DIR=$BUILD_DIR/include
 LIB_DIR=$BUILD_DIR/lib
 
