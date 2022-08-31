@@ -21,7 +21,11 @@ jobs:
           submodules: recursive
 
       - name: Build
-        run: ./build-wasm-static-lib-simd.sh
+        run: |
+          ./build-wasm-static-lib.sh
+          ./build-wasm-static-lib-simd.sh
+          ./build-wasm-static-lib-threaded.sh
+          ./build-wasm-static-lib-simd-threaded.sh
 
       - name: Archive
         if: github.event_name != 'release'
