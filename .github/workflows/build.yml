@@ -1,0 +1,66 @@
+name: Build
+
+on:
+  workflow_dispatch:
+  release:
+    types: [published]
+
+jobs:
+  wasm:
+    name: Wasm
+    runs-on: ubuntu-latest
+    steps:
+      - name: Print `github` Context
+        env:
+          GITHUB_CONTEXT: ${{ toJSON(github) }}
+        run: echo "$GITHUB_CONTEXT"
+
+      - name: Checkout
+        uses: actions/checkout@v3
+        with:
+          submodules: true
+
+      - name: Build
+        run: ./build-wasm-static-lib-simd.sh
+
+      - name: Archive
+        if: github.event_name != 'release'
+        working-directory: build/emscripten-wasm32
+        run: >-
+          tar cvfz
+          ${{ runner.temp }}/onnxruntime-emscripten-wasm32-${{ github.sha }}.tgz
+          .
+
+      - name: Archive Release
+        if: github.event_name == 'release'
+        working-directory: build/emscripten-wasm32
+        run: >-
+          tar cvfz
+          ${{ runner.temp }}/onnxruntime-emscripten-wasm32-${{ github.event.release.tag_name }}.tgz
+          .
+
+      - name: Upload Artifact
+        uses: actions/upload-artifact@v3
+        with:
+          name: onnxruntime-emscripten-wasm32
+          path: ${{ runner.temp }}/*
+
+  release:
+    name: Release
+    if: github.event_name == 'release'
+    needs: wasm
+    runs-on: ubuntu-latest
+    steps:
+      - name: Download artifact
+        uses: actions/download-artifact@v3
+
+      - name: Release
+        uses: ncipollo/release-action@v1
+        with:
+          token: ${{ secrets.GITHUB_TOKEN }}
+          name: ${{ github.event.release.name }}
+          body: ${{ github.event.release.body }}
+          artifacts: "*"
+          prerelease: ${{ github.event.release.prerelease }}
+          draft: ${{ github.event.release.draft }}
+          allowUpdates: true
