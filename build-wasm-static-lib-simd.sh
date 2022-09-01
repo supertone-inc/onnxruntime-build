@@ -2,6 +2,20 @@
 
 set -e
 
+BUILD_DIR=./build/emscripten-wasm32
+INCLUDE_DIR=$BUILD_DIR/include
+LIB_DIR=$BUILD_DIR/lib
+
+OS=$(uname -s)
+
+if [ "$OS" = "Darwin" ]; then
+    DIR_OS="MacOS"
+else
+    DIR_OS="Linux"
+fi
+
+rm -f ./onnxruntime/build/$DIR_OS/Release/libonnxruntime_webassembly.a
+
 ./onnxruntime/cmake/external/emsdk/emsdk install latest
 ./onnxruntime/cmake/external/emsdk/emsdk activate latest
 source ./onnxruntime/cmake/external/emsdk/emsdk_env.sh
@@ -14,18 +28,6 @@ source ./onnxruntime/cmake/external/emsdk/emsdk_env.sh
     --disable_rtti \
     --parallel \
     --enable_wasm_simd
-
-BUILD_DIR=./build/emscripten-wasm32
-INCLUDE_DIR=$BUILD_DIR/include
-LIB_DIR=$BUILD_DIR/lib
-
-OS=$(uname -s)
-
-if [ "$OS" = "Darwin" ]; then
-    DIR_OS="MacOS"
-else
-    DIR_OS="Linux"
-fi
 
 mkdir -p $INCLUDE_DIR
 mkdir -p $LIB_DIR
