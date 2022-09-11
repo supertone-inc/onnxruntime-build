@@ -6,9 +6,27 @@ on:
     types: [published]
 
 jobs:
-  wasm:
-    name: Wasm
-    runs-on: ubuntu-latest
+  build:
+    name: Build
+
+    strategy:
+      fail-fast: false
+      matrix:
+        include:
+          - target: wasm-staic-lib
+            runs-on: ubuntu-latest
+
+          - target: wasm-staic-lib-simd
+            runs-on: ubuntu-latest
+
+          - target: wasm-staic-lib-threaded
+            runs-on: ubuntu-latest
+
+          - target: wasm-staic-lib-simd-threaded
+            runs-on: ubuntu-latest
+
+    runs-on: ${{ matrix.runs-on }}
+
     steps:
       - name: Print `github` Context
         env:
@@ -21,46 +39,42 @@ jobs:
           submodules: recursive
 
       - name: Build
-        run: |
-          ./build-wasm-static-lib.sh
-          ./build-wasm-static-lib-simd.sh
-          ./build-wasm-static-lib-threaded.sh
-          ./build-wasm-static-lib-simd-threaded.sh
+        run: ./build-${{ matrix.target }}.sh
 
       - name: Archive
         if: github.event_name != 'release'
-        working-directory: build/emscripten-wasm32
+        working-directory: build/${{ matrix.target }}
         run: >-
           tar cvfz
-          ${{ runner.temp }}/onnxruntime-emscripten-wasm32-${{ github.sha }}.tgz
+          ${{ runner.temp }}/onnxruntime-${{ matrix.target }}-${{ github.sha }}.tgz
           .
 
       - name: Upload Artifact
         if: github.event_name != 'release'
         uses: actions/upload-artifact@v3
         with:
-          name: onnxruntime-emscripten-wasm32-${{ github.sha }}
+          name: onnxruntime-${{ matrix.target }}-${{ github.sha }}
           path: ${{ runner.temp }}/*.tgz
 
       - name: Archive Release
         if: github.event_name == 'release'
-        working-directory: build/emscripten-wasm32
+        working-directory: build/${{ matrix.target }}
         run: >-
           tar cvfz
-          ${{ runner.temp }}/onnxruntime-emscripten-wasm32-${{ github.event.release.tag_name }}.tgz
+          ${{ runner.temp }}/onnxruntime-${{ matrix.target }}-${{ github.event.release.tag_name }}.tgz
           .
 
       - name: Upload Release Artifact
         if: github.event_name == 'release'
         uses: actions/upload-artifact@v3
         with:
-          name: onnxruntime-emscripten-wasm32-${{ github.event.release.tag_name }}
+          name: onnxruntime-${{ matrix.target }}-${{ github.event.release.tag_name }}
           path: ${{ runner.temp }}/*.tgz
 
   release:
     name: Release
     if: github.event_name == 'release'
-    needs: wasm
+    needs: build
     runs-on: ubuntu-latest
     steps:
       - name: Download artifact

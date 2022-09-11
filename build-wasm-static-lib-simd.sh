@@ -2,7 +2,7 @@
 
 set -e
 
-BUILD_DIR=./build/emscripten-wasm32
+BUILD_DIR=./build/wasm-static-lib-simd
 INCLUDE_DIR=$BUILD_DIR/include
 LIB_DIR=$BUILD_DIR/lib
 
