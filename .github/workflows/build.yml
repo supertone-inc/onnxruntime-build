@@ -13,16 +13,16 @@ jobs:
       fail-fast: false
       matrix:
         include:
-          - target: wasm-staic-lib
+          - target: wasm-static-lib
             runs-on: ubuntu-latest
 
-          - target: wasm-staic-lib-simd
+          - target: wasm-static-lib-simd
             runs-on: ubuntu-latest
 
-          - target: wasm-staic-lib-threaded
+          - target: wasm-static-lib-threaded
             runs-on: ubuntu-latest
 
-          - target: wasm-staic-lib-simd-threaded
+          - target: wasm-static-lib-simd-threaded
             runs-on: ubuntu-latest
 
     runs-on: ${{ matrix.runs-on }}
