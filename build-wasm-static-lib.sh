@@ -2,7 +2,7 @@
 
 set -e
 
-OUTPUT_DIR_NAME=${OUTPUT_DIR_NAME:=wasm-sataic-lib}
+OUTPUT_DIR_NAME=${OUTPUT_DIR_NAME:=wasm-static-lib}
 LIB_NAME=${LIB_NAME:=onnxruntime_webassembly}
 BUILD_OPTIONS="\
     --config Release \
