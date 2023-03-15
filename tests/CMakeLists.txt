@@ -19,7 +19,7 @@ if(WASM)
         -s EXIT_RUNTIME=1 \
     ")
 
-    find_program(NODE_EXECUTABLE node required)
+    find_program(NODE_EXECUTABLE node REQUIRED)
 
     if(NOT NODE_EXECUTABLE)
         message(FATAL_ERROR "Node is required for a test")
