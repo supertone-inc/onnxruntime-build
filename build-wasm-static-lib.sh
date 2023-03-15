@@ -46,3 +46,10 @@ cp $ONNXRUNTIME_SOURCE_DIR/include/onnxruntime/core/session/onnxruntime_cxx_inli
 mkdir -p $LIB_DIR
 cp $ONNXRUNTIME_SOURCE_DIR/build/$OS/Release/libonnxruntime_webassembly.a $LIB_DIR/lib$LIB_NAME.a
 ln -sf lib$LIB_NAME.a $LIB_DIR/libonnxruntime.a
+
+TEST_CMAKE_OPTIONS="\
+    -D ONNXRUNTIME_DIR=$OUTPUT_DIR \
+    -D WASM=ON \
+    -D CMAKE_TOOLCHAIN_FILE=$EMSDK_DIR/upstream/emscripten/cmake/Modules/Platform/Emscripten.cmake \
+"
+source $(pwd)/test.sh
