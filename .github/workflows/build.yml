@@ -43,7 +43,7 @@ jobs:
 
       - name: Archive
         if: github.event_name != 'release'
-        working-directory: build/${{ matrix.target }}
+        working-directory: outputs/${{ matrix.target }}
         run: >-
           tar cvfz
           ${{ runner.temp }}/onnxruntime-${{ matrix.target }}-${{ github.sha }}.tgz
@@ -58,7 +58,7 @@ jobs:
 
       - name: Archive Release
         if: github.event_name == 'release'
-        working-directory: build/${{ matrix.target }}
+        working-directory: outputs/${{ matrix.target }}
         run: >-
           tar cvfz
           ${{ runner.temp }}/onnxruntime-${{ matrix.target }}-${{ github.event.release.tag_name }}.tgz
