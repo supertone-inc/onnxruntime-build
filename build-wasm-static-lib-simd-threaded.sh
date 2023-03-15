@@ -37,3 +37,4 @@ cp ./onnxruntime/include/onnxruntime/core/session/onnxruntime_c_api.h $INCLUDE_D
 cp ./onnxruntime/include/onnxruntime/core/session/onnxruntime_cxx_api.h $INCLUDE_DIR
 cp ./onnxruntime/include/onnxruntime/core/session/onnxruntime_cxx_inline.h $INCLUDE_DIR
 cp ./onnxruntime/build/$DIR_OS/Release/libonnxruntime_webassembly.a $LIB_DIR/libonnxruntime_webassembly_simd_threaded.a
+ln -s libonnxruntime_webassembly_simd_threaded.a $LIB_DIR/libonnxruntime.a
