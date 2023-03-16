@@ -2,7 +2,7 @@
 
 set -e
 
-SOURCE_DIR=$(pwd)/tests
+SOURCE_DIR=tests
 BUILD_DIR=$SOURCE_DIR/build
 
 CMAKE_OPTIONS="\

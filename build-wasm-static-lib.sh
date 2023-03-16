@@ -54,4 +54,4 @@ TEST_CMAKE_OPTIONS="\
     -D WASM=ON \
     -D CMAKE_TOOLCHAIN_FILE=$EMSDK_DIR/upstream/emscripten/cmake/Modules/Platform/Emscripten.cmake \
 "
-source $(pwd)/test.sh
+source ./test.sh
