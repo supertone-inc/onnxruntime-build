@@ -30,6 +30,8 @@ Darwin)
     ;;
 esac
 
+git submodule update --init --recursive
+
 $EMSDK_DIR/emsdk install latest
 $EMSDK_DIR/emsdk activate latest
 source $EMSDK_DIR/emsdk_env.sh
