@@ -3,7 +3,7 @@
 #include <gtest/gtest.h>
 #include <onnxruntime_cxx_api.h>
 
-TEST(WebAssemblyTest, test)
+TEST(StaticLibTest, test)
 {
     Ort::Env ort_env;
     Ort::Session session{ort_env, "testdata/mul_1.onnx", Ort::SessionOptions{nullptr}};

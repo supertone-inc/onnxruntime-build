@@ -9,7 +9,7 @@ add_executable(${PROJECT_NAME} test_main.cc test_inference.cc)
 
 target_include_directories(${PROJECT_NAME} PRIVATE ${ONNXRUNTIME_DIR}/include)
 target_link_directories(${PROJECT_NAME} PRIVATE ${ONNXRUNTIME_DIR}/lib)
-target_link_libraries(${PROJECT_NAME} PRIVATE onnxruntime GTest::gtest)
+target_link_libraries(${PROJECT_NAME} onnxruntime GTest::gtest)
 
 if(WASM)
     set_target_properties(${PROJECT_NAME} PROPERTIES LINK_FLAGS "\
@@ -30,6 +30,12 @@ if(WASM)
         COMMAND ${NODE_EXECUTABLE} ${PROJECT_NAME}.js
     )
 else()
+    if(UNIX AND NOT APPLE)
+        target_link_libraries(${PROJECT_NAME} dl)
+    endif()
+
+    file(COPY testdata DESTINATION .)
+
     add_test(
         NAME ${PROJECT_NAME}
         COMMAND ${PROJECT_NAME}
