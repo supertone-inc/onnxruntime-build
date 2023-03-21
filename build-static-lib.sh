@@ -21,6 +21,8 @@ Linux)
     ;;
 esac
 
+git submodule update --init --recursive
+
 cmake -S . -B $BUILD_DIR -D CMAKE_BUILD_TYPE=Release
 cmake --build $BUILD_DIR --config Release -j $NUM_PARALLEL_JOBS
 cmake --install $BUILD_DIR --config Release --prefix $OUTPUT_DIR
