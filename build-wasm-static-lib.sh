@@ -14,11 +14,11 @@ BUILD_OPTIONS="\
     $BUILD_OPTIONS \
 "
 
-OUTPUT_DIR=$(pwd)/outputs/$OUTPUT_DIR_NAME
+OUTPUT_DIR=outputs/$OUTPUT_DIR_NAME
 INCLUDE_DIR=$OUTPUT_DIR/include
 LIB_DIR=$OUTPUT_DIR/lib
 
-ONNXRUNTIME_SOURCE_DIR=$(pwd)/onnxruntime
+ONNXRUNTIME_SOURCE_DIR=onnxruntime
 EMSDK_DIR=$ONNXRUNTIME_SOURCE_DIR/cmake/external/emsdk
 
 case $(uname -s) in
@@ -52,6 +52,6 @@ ln -sf lib$LIB_NAME.a $LIB_DIR/libonnxruntime.a
 TEST_CMAKE_OPTIONS="\
     -D ONNXRUNTIME_DIR=$OUTPUT_DIR \
     -D WASM=ON \
-    -D CMAKE_TOOLCHAIN_FILE=$EMSDK_DIR/upstream/emscripten/cmake/Modules/Platform/Emscripten.cmake \
+    -D CMAKE_TOOLCHAIN_FILE=$EMSDK/upstream/emscripten/cmake/Modules/Platform/Emscripten.cmake \
 "
 source ./test.sh

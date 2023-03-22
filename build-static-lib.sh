@@ -4,7 +4,7 @@ set -e
 
 OUTPUT_DIR_NAME=static-lib
 BUILD_DIR=build
-OUTPUT_DIR=$(pwd)/outputs/$OUTPUT_DIR_NAME
+OUTPUT_DIR=outputs/$OUTPUT_DIR_NAME
 
 case $(uname -s) in
 Darwin)
@@ -13,7 +13,7 @@ Darwin)
     ;;
 Linux)
     OS="Linux"
-    NUM_PARALLEL_JOBS=$(grep ^cpu\\scores /proc/cpuinfo | uniq |  awk '{print $4}')
+    NUM_PARALLEL_JOBS=$(grep ^cpu\\scores /proc/cpuinfo | uniq | awk '{print $4}')
     ;;
 *)
     OS="Windows"

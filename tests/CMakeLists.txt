@@ -3,6 +3,10 @@ project(tests)
 
 enable_testing()
 
+execute_process(COMMAND pwd OUTPUT_VARIABLE CURRENT_WORKING_DIRECTORY)
+string(STRIP ${CURRENT_WORKING_DIRECTORY} CURRENT_WORKING_DIRECTORY)
+get_filename_component(ONNXRUNTIME_DIR ${ONNXRUNTIME_DIR} REALPATH BASE_DIR ${CURRENT_WORKING_DIRECTORY})
+
 add_subdirectory(${CMAKE_CURRENT_SOURCE_DIR}/../onnxruntime/cmake/external/googletest external/googletest EXCLUDE_FROM_ALL)
 
 add_executable(${PROJECT_NAME} test_main.cc test_inference.cc)
