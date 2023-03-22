@@ -17,6 +17,7 @@ BUILD_OPTIONS="\
     --parallel \
     $BUILD_OPTIONS \
 "
+SKIP_TESTS=${SKIP_TESTS:=false}
 
 git submodule update --init --recursive
 
@@ -36,6 +37,10 @@ cp $ONNXRUNTIME_ROOT/include/onnxruntime/core/session/onnxruntime_cxx_inline.h $
 mkdir -p $OUTPUT_DIR/lib
 cp $BUILD_DIR/Release/libonnxruntime_webassembly.a $OUTPUT_DIR/lib/lib$LIB_NAME.a
 ln -sf lib$LIB_NAME.a $OUTPUT_DIR/lib/libonnxruntime.a
+
+if [ $SKIP_TESTS = true ]; then
+    exit 0
+fi
 
 cmake \
     -S wasm-static-lib/tests \
