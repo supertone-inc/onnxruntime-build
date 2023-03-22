@@ -28,7 +28,8 @@ cmake --build $BUILD_DIR --config Release -j $NUM_PARALLEL_JOBS
 cmake --install $BUILD_DIR --config Release --prefix $OUTPUT_DIR
 
 TEST_CMAKE_OPTIONS="\
-    -D ONNXRUNTIME_DIR=$OUTPUT_DIR \
+    -D ONNXRUNTIME_ROOT=onnxruntime \
+    -D ONNXRUNTIME_LIB_DIR=$OUTPUT_DIR/lib \
     -U WASM \
     -U CMAKE_TOOLCHAIN_FILE \
 "

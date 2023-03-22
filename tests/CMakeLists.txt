@@ -5,21 +5,28 @@ enable_testing()
 
 execute_process(COMMAND pwd OUTPUT_VARIABLE CURRENT_WORKING_DIRECTORY)
 string(STRIP ${CURRENT_WORKING_DIRECTORY} CURRENT_WORKING_DIRECTORY)
-get_filename_component(ONNXRUNTIME_DIR ${ONNXRUNTIME_DIR} REALPATH BASE_DIR ${CURRENT_WORKING_DIRECTORY})
 
-add_subdirectory(${CMAKE_CURRENT_SOURCE_DIR}/../onnxruntime/cmake/external/googletest external/googletest EXCLUDE_FROM_ALL)
+get_filename_component(ONNXRUNTIME_ROOT ${ONNXRUNTIME_ROOT} REALPATH BASE_DIR ${CURRENT_WORKING_DIRECTORY})
+get_filename_component(ONNXRUNTIME_LIB_DIR ${ONNXRUNTIME_LIB_DIR} REALPATH BASE_DIR ${CURRENT_WORKING_DIRECTORY})
 
-add_executable(${PROJECT_NAME} test_main.cc test_inference.cc)
+add_subdirectory(${ONNXRUNTIME_ROOT}/cmake/external/googletest external/googletest EXCLUDE_FROM_ALL)
 
-target_include_directories(${PROJECT_NAME} PRIVATE ${ONNXRUNTIME_DIR}/include)
-target_link_directories(${PROJECT_NAME} PRIVATE ${ONNXRUNTIME_DIR}/lib)
+add_executable(${PROJECT_NAME}
+    ${ONNXRUNTIME_ROOT}/onnxruntime/test/wasm/test_main.cc
+    ${ONNXRUNTIME_ROOT}/onnxruntime/test/wasm/test_inference.cc
+)
+
+target_include_directories(${PROJECT_NAME} PRIVATE ${ONNXRUNTIME_ROOT}/include/onnxruntime)
+target_link_directories(${PROJECT_NAME} PRIVATE ${ONNXRUNTIME_LIB_DIR})
 target_link_libraries(${PROJECT_NAME} onnxruntime GTest::gtest)
+
+file(COPY ${ONNXRUNTIME_ROOT}/onnxruntime/test/testdata DESTINATION .)
 
 if(WASM)
     set_target_properties(${PROJECT_NAME} PROPERTIES LINK_FLAGS "\
         -s ALLOW_MEMORY_GROWTH=1 \
         -s \"EXPORTED_RUNTIME_METHODS=['FS']\" \
-        --preload-file ${CMAKE_CURRENT_SOURCE_DIR}/testdata@/testdata \
+        --preload-file ${CMAKE_CURRENT_BINARY_DIR}/testdata@/testdata \
         -s EXIT_RUNTIME=1 \
     ")
 
@@ -37,8 +44,6 @@ else()
     if(UNIX AND NOT APPLE)
         target_link_libraries(${PROJECT_NAME} dl)
     endif()
-
-    file(COPY testdata DESTINATION .)
 
     add_test(
         NAME ${PROJECT_NAME}

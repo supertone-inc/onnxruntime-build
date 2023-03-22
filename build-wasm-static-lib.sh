@@ -18,8 +18,8 @@ OUTPUT_DIR=outputs/$OUTPUT_DIR_NAME
 INCLUDE_DIR=$OUTPUT_DIR/include
 LIB_DIR=$OUTPUT_DIR/lib
 
-ONNXRUNTIME_SOURCE_DIR=onnxruntime
-EMSDK_DIR=$ONNXRUNTIME_SOURCE_DIR/cmake/external/emsdk
+ONNXRUNTIME_ROOT=onnxruntime
+EMSDK_DIR=$ONNXRUNTIME_ROOT/cmake/external/emsdk
 
 case $(uname -s) in
 Darwin)
@@ -36,21 +36,22 @@ $EMSDK_DIR/emsdk install latest
 $EMSDK_DIR/emsdk activate latest
 source $EMSDK_DIR/emsdk_env.sh
 
-rm -f $ONNXRUNTIME_SOURCE_DIR/build/$OS/Release/libonnxruntime_webassembly.a
+rm -f $ONNXRUNTIME_ROOT/build/$OS/Release/libonnxruntime_webassembly.a
 
-$ONNXRUNTIME_SOURCE_DIR/build.sh $BUILD_OPTIONS
+$ONNXRUNTIME_ROOT/build.sh $BUILD_OPTIONS
 
 mkdir -p $INCLUDE_DIR
-cp $ONNXRUNTIME_SOURCE_DIR/include/onnxruntime/core/session/onnxruntime_c_api.h $INCLUDE_DIR
-cp $ONNXRUNTIME_SOURCE_DIR/include/onnxruntime/core/session/onnxruntime_cxx_api.h $INCLUDE_DIR
-cp $ONNXRUNTIME_SOURCE_DIR/include/onnxruntime/core/session/onnxruntime_cxx_inline.h $INCLUDE_DIR
+cp $ONNXRUNTIME_ROOT/include/onnxruntime/core/session/onnxruntime_c_api.h $INCLUDE_DIR
+cp $ONNXRUNTIME_ROOT/include/onnxruntime/core/session/onnxruntime_cxx_api.h $INCLUDE_DIR
+cp $ONNXRUNTIME_ROOT/include/onnxruntime/core/session/onnxruntime_cxx_inline.h $INCLUDE_DIR
 
 mkdir -p $LIB_DIR
-cp $ONNXRUNTIME_SOURCE_DIR/build/$OS/Release/libonnxruntime_webassembly.a $LIB_DIR/lib$LIB_NAME.a
+cp $ONNXRUNTIME_ROOT/build/$OS/Release/libonnxruntime_webassembly.a $LIB_DIR/lib$LIB_NAME.a
 ln -sf lib$LIB_NAME.a $LIB_DIR/libonnxruntime.a
 
 TEST_CMAKE_OPTIONS="\
-    -D ONNXRUNTIME_DIR=$OUTPUT_DIR \
+    -D ONNXRUNTIME_ROOT=$ONNXRUNTIME_ROOT \
+    -D ONNXRUNTIME_LIB_DIR=$OUTPUT_DIR/lib \
     -D WASM=ON \
     -D CMAKE_TOOLCHAIN_FILE=$EMSDK/upstream/emscripten/cmake/Modules/Platform/Emscripten.cmake \
 "
