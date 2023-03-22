@@ -1,23 +1,5 @@
-cmake_minimum_required(VERSION 3.24)
-project(onnxruntime-static-lib)
+# Reference: ../onnxruntime/cmake/onnxruntime_webassembly.cmake
 
-set(onnxruntime_BUILD_SHARED_LIB ON)
-
-add_subdirectory(onnxruntime/cmake onnxruntime EXCLUDE_FROM_ALL)
-
-get_target_property(libraries onnxruntime LINK_LIBRARIES)
-
-list(REMOVE_ITEM libraries
-    dl
-    Threads::Threads
-    absl::inlined_vector
-    absl::flat_hash_set
-    absl::flat_hash_map
-    absl::node_hash_set
-    absl::node_hash_map
-)
-
-# Reference: onnxruntime/cmake/onnxruntime_webassembly.cmake
 function(bundle_static_library bundled_target_name)
     function(recursively_collect_dependencies input_target)
         set(input_link_libraries LINK_LIBRARIES)
@@ -112,27 +94,3 @@ function(bundle_static_library bundled_target_name)
 
     add_dependencies(${bundled_target_name} bundling_target)
 endfunction()
-
-bundle_static_library(${PROJECT_NAME} ${libraries})
-
-install(
-    FILES
-    onnxruntime/include/onnxruntime/core/session/onnxruntime_c_api.h
-    onnxruntime/include/onnxruntime/core/session/onnxruntime_cxx_api.h
-    onnxruntime/include/onnxruntime/core/session/onnxruntime_cxx_inline.h
-    DESTINATION include
-)
-
-if(UNIX)
-    install(
-        FILES ${CMAKE_CURRENT_BINARY_DIR}/lib${PROJECT_NAME}.a
-        RENAME libonnxruntime.a
-        DESTINATION lib
-    )
-else()
-    install(
-        FILES ${CMAKE_CURRENT_BINARY_DIR}/${PROJECT_NAME}.lib
-        RENAME onnxruntime.lib
-        DESTINATION lib
-    )
-endif()

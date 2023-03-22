@@ -20,7 +20,11 @@ esac
 
 git submodule update --init --recursive
 
-cmake -S . -B $BUILD_DIR -D CMAKE_BUILD_TYPE=Release
+cmake \
+    -S static-lib \
+    -B $BUILD_DIR \
+    -D CMAKE_BUILD_TYPE=Release \
+    -D ONNXRUNTIME_ROOT=$ONNXRUNTIME_ROOT
 cmake --build $BUILD_DIR --config Release -j $NUM_PARALLEL_JOBS
 cmake --install $BUILD_DIR --config Release --prefix $OUTPUT_DIR
 
