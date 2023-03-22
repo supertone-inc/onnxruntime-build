@@ -2,6 +2,7 @@
 
 set -e
 
+SOURCE_DIR=static-lib
 BUILD_DIR=build/static-lib
 OUTPUT_DIR=outputs/static-lib
 ONNXRUNTIME_ROOT=onnxruntime
@@ -21,7 +22,7 @@ esac
 git submodule update --init --recursive
 
 cmake \
-    -S static-lib \
+    -S $SOURCE_DIR \
     -B $BUILD_DIR \
     -D CMAKE_BUILD_TYPE=Release \
     -D ONNXRUNTIME_ROOT=$ONNXRUNTIME_ROOT
@@ -29,9 +30,9 @@ cmake --build $BUILD_DIR --config Release -j $NUM_PARALLEL_JOBS
 cmake --install $BUILD_DIR --config Release --prefix $OUTPUT_DIR
 
 cmake \
-    -S tests \
-    -B ${BUILD_DIR}/tests \
+    -S $SOURCE_DIR/tests \
+    -B $BUILD_DIR/tests \
     -D ONNXRUNTIME_ROOT=$ONNXRUNTIME_ROOT \
     -D ONNXRUNTIME_LIB_DIR=$OUTPUT_DIR/lib
-cmake --build ${BUILD_DIR}/tests --clean-first
-ctest --test-dir ${BUILD_DIR}/tests --verbose --no-tests=error
+cmake --build $BUILD_DIR/tests --clean-first
+ctest --test-dir $BUILD_DIR/tests --verbose --no-tests=error

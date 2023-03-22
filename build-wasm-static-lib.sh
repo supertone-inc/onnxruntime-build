@@ -38,11 +38,10 @@ cp $BUILD_DIR/Release/libonnxruntime_webassembly.a $OUTPUT_DIR/lib/lib$LIB_NAME.
 ln -sf lib$LIB_NAME.a $OUTPUT_DIR/lib/libonnxruntime.a
 
 cmake \
-    -S tests \
-    -B ${BUILD_DIR}/tests \
+    -S wasm-static-lib/tests \
+    -B $BUILD_DIR/tests \
     -D ONNXRUNTIME_ROOT=onnxruntime \
     -D ONNXRUNTIME_LIB_DIR=$OUTPUT_DIR/lib \
-    -D WASM=ON \
     -D CMAKE_TOOLCHAIN_FILE=$EMSDK/upstream/emscripten/cmake/Modules/Platform/Emscripten.cmake
-cmake --build ${BUILD_DIR}/tests --clean-first
-ctest --test-dir ${BUILD_DIR}/tests --verbose --no-tests=error
+cmake --build $BUILD_DIR/tests --clean-first
+ctest --test-dir $BUILD_DIR/tests --verbose --no-tests=error
