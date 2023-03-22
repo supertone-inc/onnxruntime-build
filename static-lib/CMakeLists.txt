@@ -5,9 +5,9 @@ set(onnxruntime_BUILD_SHARED_LIB ON)
 
 execute_process(COMMAND pwd OUTPUT_VARIABLE CURRENT_WORKING_DIRECTORY)
 string(STRIP ${CURRENT_WORKING_DIRECTORY} CURRENT_WORKING_DIRECTORY)
-get_filename_component(ONNXRUNTIME_ROOT ${ONNXRUNTIME_ROOT} REALPATH BASE_DIR ${CURRENT_WORKING_DIRECTORY})
+get_filename_component(ONNXRUNTIME_SOURCE_DIR ${ONNXRUNTIME_SOURCE_DIR} REALPATH BASE_DIR ${CURRENT_WORKING_DIRECTORY})
 
-add_subdirectory(${ONNXRUNTIME_ROOT}/cmake onnxruntime EXCLUDE_FROM_ALL)
+add_subdirectory(${ONNXRUNTIME_SOURCE_DIR}/cmake onnxruntime EXCLUDE_FROM_ALL)
 get_target_property(libraries onnxruntime LINK_LIBRARIES)
 list(REMOVE_ITEM libraries
     dl
@@ -24,9 +24,9 @@ bundle_static_library(${PROJECT_NAME} ${libraries})
 
 install(
     FILES
-    ${ONNXRUNTIME_ROOT}/include/onnxruntime/core/session/onnxruntime_c_api.h
-    ${ONNXRUNTIME_ROOT}/include/onnxruntime/core/session/onnxruntime_cxx_api.h
-    ${ONNXRUNTIME_ROOT}/include/onnxruntime/core/session/onnxruntime_cxx_inline.h
+    ${ONNXRUNTIME_SOURCE_DIR}/include/onnxruntime/core/session/onnxruntime_c_api.h
+    ${ONNXRUNTIME_SOURCE_DIR}/include/onnxruntime/core/session/onnxruntime_cxx_api.h
+    ${ONNXRUNTIME_SOURCE_DIR}/include/onnxruntime/core/session/onnxruntime_cxx_inline.h
     DESTINATION include
 )
 
