@@ -1,14 +1,9 @@
 cmake_minimum_required(VERSION 3.24)
 project(onnxruntime_static_lib)
 
-set(onnxruntime_BUILD_SHARED_LIB ON)
-
-execute_process(COMMAND pwd OUTPUT_VARIABLE CURRENT_WORKING_DIRECTORY)
-string(STRIP ${CURRENT_WORKING_DIRECTORY} CURRENT_WORKING_DIRECTORY)
-
-get_filename_component(ONNXRUNTIME_SOURCE_DIR ${ONNXRUNTIME_SOURCE_DIR} REALPATH BASE_DIR ${CURRENT_WORKING_DIRECTORY})
 file(STRINGS ${ONNXRUNTIME_SOURCE_DIR}/VERSION_NUMBER ONNXRUNTIME_VERSION)
 
+set(onnxruntime_BUILD_SHARED_LIB ON)
 add_subdirectory(${ONNXRUNTIME_SOURCE_DIR}/cmake onnxruntime EXCLUDE_FROM_ALL)
 get_target_property(libraries onnxruntime LINK_LIBRARIES)
 list(REMOVE_ITEM libraries

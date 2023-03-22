@@ -22,10 +22,6 @@ ONNXRUNTIME_SOURCE_DIR=onnxruntime
 ONNXRUNTIME_VERSION=$(cat $ONNXRUNTIME_SOURCE_DIR/VERSION_NUMBER)
 EMSDK_DIR=$ONNXRUNTIME_SOURCE_DIR/cmake/external/emsdk
 
-$EMSDK_DIR/emsdk install latest
-$EMSDK_DIR/emsdk activate latest
-source $EMSDK_DIR/emsdk_env.sh
-
 rm -f $BUILD_DIR/Release/libonnxruntime_webassembly.a
 
 $ONNXRUNTIME_SOURCE_DIR/build.sh $BUILD_OPTIONS
@@ -46,8 +42,8 @@ fi
 cmake \
     -S wasm-static-lib/tests \
     -B $BUILD_DIR/tests \
-    -D ONNXRUNTIME_SOURCE_DIR=onnxruntime \
-    -D ONNXRUNTIME_LIB_DIR=$OUTPUT_DIR/lib \
-    -D CMAKE_TOOLCHAIN_FILE=$EMSDK/upstream/emscripten/cmake/Modules/Platform/Emscripten.cmake
+    -D ONNXRUNTIME_SOURCE_DIR=$(realpath $ONNXRUNTIME_SOURCE_DIR) \
+    -D ONNXRUNTIME_LIB_DIR=$(realpath $OUTPUT_DIR/lib) \
+    -D CMAKE_TOOLCHAIN_FILE=$(realpath $EMSDK_DIR/upstream/emscripten/cmake/Modules/Platform/Emscripten.cmake)
 cmake --build $BUILD_DIR/tests --clean-first
 ctest --test-dir $BUILD_DIR/tests --verbose --no-tests=error
