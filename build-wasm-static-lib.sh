@@ -2,11 +2,11 @@
 
 set -e
 
+git submodule update --init --recursive
+
 LIB_NAME=${LIB_NAME:=onnxruntime_webassembly}
 BUILD_DIR=build/wasm-static-lib
 OUTPUT_DIR=${OUTPUT_DIR:=outputs/wasm-static-lib}
-ONNXRUNTIME_SOURCE_DIR=onnxruntime
-EMSDK_DIR=$ONNXRUNTIME_SOURCE_DIR/cmake/external/emsdk
 BUILD_OPTIONS="\
     --build_dir $BUILD_DIR \
     --config Release \
@@ -18,8 +18,9 @@ BUILD_OPTIONS="\
     $BUILD_OPTIONS \
 "
 SKIP_TESTS=${SKIP_TESTS:=false}
-
-git submodule update --init --recursive
+ONNXRUNTIME_SOURCE_DIR=onnxruntime
+ONNXRUNTIME_VERSION=$(cat $ONNXRUNTIME_SOURCE_DIR/VERSION_NUMBER)
+EMSDK_DIR=$ONNXRUNTIME_SOURCE_DIR/cmake/external/emsdk
 
 $EMSDK_DIR/emsdk install latest
 $EMSDK_DIR/emsdk activate latest
@@ -35,8 +36,8 @@ cp $ONNXRUNTIME_SOURCE_DIR/include/onnxruntime/core/session/onnxruntime_cxx_api.
 cp $ONNXRUNTIME_SOURCE_DIR/include/onnxruntime/core/session/onnxruntime_cxx_inline.h $OUTPUT_DIR/include
 
 mkdir -p $OUTPUT_DIR/lib
-cp $BUILD_DIR/Release/libonnxruntime_webassembly.a $OUTPUT_DIR/lib/lib$LIB_NAME.a
-ln -sf lib$LIB_NAME.a $OUTPUT_DIR/lib/libonnxruntime.a
+cp $BUILD_DIR/Release/libonnxruntime_webassembly.a $OUTPUT_DIR/lib/lib$LIB_NAME.$ONNXRUNTIME_VERSION.a
+ln -sf lib$LIB_NAME.$ONNXRUNTIME_VERSION.a $OUTPUT_DIR/lib/libonnxruntime.a
 
 if [ $SKIP_TESTS = true ]; then
     exit 0

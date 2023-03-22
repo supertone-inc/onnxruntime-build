@@ -1,11 +1,13 @@
 cmake_minimum_required(VERSION 3.24)
-project(onnxruntime-static-lib)
+project(onnxruntime_static_lib)
 
 set(onnxruntime_BUILD_SHARED_LIB ON)
 
 execute_process(COMMAND pwd OUTPUT_VARIABLE CURRENT_WORKING_DIRECTORY)
 string(STRIP ${CURRENT_WORKING_DIRECTORY} CURRENT_WORKING_DIRECTORY)
+
 get_filename_component(ONNXRUNTIME_SOURCE_DIR ${ONNXRUNTIME_SOURCE_DIR} REALPATH BASE_DIR ${CURRENT_WORKING_DIRECTORY})
+file(STRINGS ${ONNXRUNTIME_SOURCE_DIR}/VERSION_NUMBER ONNXRUNTIME_VERSION)
 
 add_subdirectory(${ONNXRUNTIME_SOURCE_DIR}/cmake onnxruntime EXCLUDE_FROM_ALL)
 get_target_property(libraries onnxruntime LINK_LIBRARIES)
@@ -33,9 +35,14 @@ install(
 if(UNIX)
     install(
         FILES ${CMAKE_CURRENT_BINARY_DIR}/lib${PROJECT_NAME}.a
-        RENAME libonnxruntime.a
+        RENAME libonnxruntime.${ONNXRUNTIME_VERSION}.a
         DESTINATION lib
     )
+    install(CODE "execute_process( \
+        COMMAND ${CMAKE_COMMAND} -E create_symlink \
+        libonnxruntime.${ONNXRUNTIME_VERSION}.a \
+        ${CMAKE_INSTALL_PREFIX}/lib/libonnxruntime.a \
+    )")
 else()
     install(
         FILES ${CMAKE_CURRENT_BINARY_DIR}/${PROJECT_NAME}.lib

@@ -2,6 +2,8 @@
 
 set -e
 
+git submodule update --init --recursive
+
 SOURCE_DIR=static-lib
 BUILD_DIR=build/static-lib
 OUTPUT_DIR=outputs/static-lib
@@ -19,15 +21,14 @@ Linux)
     ;;
 esac
 
-git submodule update --init --recursive
-
 cmake \
     -S $SOURCE_DIR \
     -B $BUILD_DIR \
     -D CMAKE_BUILD_TYPE=Release \
-    -D ONNXRUNTIME_SOURCE_DIR=$ONNXRUNTIME_SOURCE_DIR
+    -D ONNXRUNTIME_SOURCE_DIR=$ONNXRUNTIME_SOURCE_DIR \
+    -D CMAKE_INSTALL_PREFIX=$OUTPUT_DIR
 cmake --build $BUILD_DIR --config Release -j $NUM_PARALLEL_JOBS
-cmake --install $BUILD_DIR --config Release --prefix $OUTPUT_DIR
+cmake --install $BUILD_DIR --config Release
 
 cmake \
     -S $SOURCE_DIR/tests \
