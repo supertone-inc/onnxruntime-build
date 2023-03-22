@@ -2,8 +2,8 @@
 
 set -e
 
-OUTPUT_DIR_NAME=wasm-static-lib-simd
 LIB_NAME=onnxruntime_webassembly_simd
+OUTPUT_DIR=outputs/wasm-static-lib-simd
 BUILD_OPTIONS=--enable_wasm_simd
 
 source ./build-wasm-static-lib.sh

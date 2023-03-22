@@ -2,9 +2,13 @@
 
 set -e
 
-OUTPUT_DIR_NAME=${OUTPUT_DIR_NAME:=wasm-static-lib}
 LIB_NAME=${LIB_NAME:=onnxruntime_webassembly}
+BUILD_DIR=build/wasm-static-lib
+OUTPUT_DIR=${OUTPUT_DIR:=outputs/wasm-static-lib}
+ONNXRUNTIME_ROOT=onnxruntime
+EMSDK_DIR=$ONNXRUNTIME_ROOT/cmake/external/emsdk
 BUILD_OPTIONS="\
+    --build_dir $BUILD_DIR \
     --config Release \
     --build_wasm_static_lib \
     --skip_tests \
@@ -14,45 +18,31 @@ BUILD_OPTIONS="\
     $BUILD_OPTIONS \
 "
 
-OUTPUT_DIR=outputs/$OUTPUT_DIR_NAME
-INCLUDE_DIR=$OUTPUT_DIR/include
-LIB_DIR=$OUTPUT_DIR/lib
-
-ONNXRUNTIME_ROOT=onnxruntime
-EMSDK_DIR=$ONNXRUNTIME_ROOT/cmake/external/emsdk
-
-case $(uname -s) in
-Darwin)
-    OS="MacOS"
-    ;;
-*)
-    OS="Linux"
-    ;;
-esac
-
 git submodule update --init --recursive
 
 $EMSDK_DIR/emsdk install latest
 $EMSDK_DIR/emsdk activate latest
 source $EMSDK_DIR/emsdk_env.sh
 
-rm -f $ONNXRUNTIME_ROOT/build/$OS/Release/libonnxruntime_webassembly.a
+rm -f $BUILD_DIR/Release/libonnxruntime_webassembly.a
 
 $ONNXRUNTIME_ROOT/build.sh $BUILD_OPTIONS
 
-mkdir -p $INCLUDE_DIR
-cp $ONNXRUNTIME_ROOT/include/onnxruntime/core/session/onnxruntime_c_api.h $INCLUDE_DIR
-cp $ONNXRUNTIME_ROOT/include/onnxruntime/core/session/onnxruntime_cxx_api.h $INCLUDE_DIR
-cp $ONNXRUNTIME_ROOT/include/onnxruntime/core/session/onnxruntime_cxx_inline.h $INCLUDE_DIR
+mkdir -p $OUTPUT_DIR/include
+cp $ONNXRUNTIME_ROOT/include/onnxruntime/core/session/onnxruntime_c_api.h $OUTPUT_DIR/include
+cp $ONNXRUNTIME_ROOT/include/onnxruntime/core/session/onnxruntime_cxx_api.h $OUTPUT_DIR/include
+cp $ONNXRUNTIME_ROOT/include/onnxruntime/core/session/onnxruntime_cxx_inline.h $OUTPUT_DIR/include
 
-mkdir -p $LIB_DIR
-cp $ONNXRUNTIME_ROOT/build/$OS/Release/libonnxruntime_webassembly.a $LIB_DIR/lib$LIB_NAME.a
-ln -sf lib$LIB_NAME.a $LIB_DIR/libonnxruntime.a
+mkdir -p $OUTPUT_DIR/lib
+cp $BUILD_DIR/Release/libonnxruntime_webassembly.a $OUTPUT_DIR/lib/lib$LIB_NAME.a
+ln -sf lib$LIB_NAME.a $OUTPUT_DIR/lib/libonnxruntime.a
 
-TEST_CMAKE_OPTIONS="\
-    -D ONNXRUNTIME_ROOT=$ONNXRUNTIME_ROOT \
+cmake \
+    -S tests \
+    -B ${BUILD_DIR}/tests \
+    -D ONNXRUNTIME_ROOT=onnxruntime \
     -D ONNXRUNTIME_LIB_DIR=$OUTPUT_DIR/lib \
     -D WASM=ON \
-    -D CMAKE_TOOLCHAIN_FILE=$EMSDK/upstream/emscripten/cmake/Modules/Platform/Emscripten.cmake \
-"
-source ./test.sh
+    -D CMAKE_TOOLCHAIN_FILE=$EMSDK/upstream/emscripten/cmake/Modules/Platform/Emscripten.cmake
+cmake --build ${BUILD_DIR}/tests --clean-first
+ctest --test-dir ${BUILD_DIR}/tests --verbose --no-tests=error
