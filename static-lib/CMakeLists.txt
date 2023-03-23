@@ -14,6 +14,7 @@ list(REMOVE_ITEM libraries
     absl::flat_hash_map
     absl::node_hash_set
     absl::node_hash_map
+    $<$<CONFIG:DEBUG>:Dbghelp>
 )
 
 include(bundle_static_library.cmake)

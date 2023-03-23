@@ -1,26 +1,25 @@
 cmake_minimum_required(VERSION 3.24)
 project(tests)
 
-enable_testing()
-
-add_subdirectory(${ONNXRUNTIME_SOURCE_DIR}/cmake/external/googletest external/googletest EXCLUDE_FROM_ALL)
+set(CMAKE_MSVC_RUNTIME_LIBRARY MultiThreadedDLL)
 
 add_executable(${PROJECT_NAME}
     ${ONNXRUNTIME_SOURCE_DIR}/onnxruntime/test/wasm/test_main.cc
-    ${ONNXRUNTIME_SOURCE_DIR}/onnxruntime/test/wasm/test_inference.cc
+    test_inference.cc
 )
+
+add_subdirectory(${ONNXRUNTIME_SOURCE_DIR}/cmake/external/googletest external/googletest EXCLUDE_FROM_ALL)
+target_link_libraries(${PROJECT_NAME} GTest::gtest)
 
 target_include_directories(${PROJECT_NAME} PRIVATE ${ONNXRUNTIME_SOURCE_DIR}/include/onnxruntime)
 target_link_directories(${PROJECT_NAME} PRIVATE ${ONNXRUNTIME_LIB_DIR})
-target_link_libraries(${PROJECT_NAME} onnxruntime GTest::gtest)
-
-file(COPY ${ONNXRUNTIME_SOURCE_DIR}/onnxruntime/test/testdata DESTINATION .)
+target_link_libraries(${PROJECT_NAME} onnxruntime)
 
 if(UNIX AND NOT APPLE)
     target_link_libraries(${PROJECT_NAME} dl)
 endif()
 
-add_test(
-    NAME ${PROJECT_NAME}
-    COMMAND ${PROJECT_NAME}
-)
+file(COPY ${ONNXRUNTIME_SOURCE_DIR}/onnxruntime/test/testdata DESTINATION .)
+
+enable_testing()
+add_test(NAME ${PROJECT_NAME} COMMAND ${PROJECT_NAME})

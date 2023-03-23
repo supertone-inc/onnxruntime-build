@@ -1,33 +1,24 @@
 cmake_minimum_required(VERSION 3.24)
 project(tests)
 
-enable_testing()
-
-add_subdirectory(${ONNXRUNTIME_SOURCE_DIR}/cmake/external/googletest external/googletest EXCLUDE_FROM_ALL)
-
 add_executable(${PROJECT_NAME}
     ${ONNXRUNTIME_SOURCE_DIR}/onnxruntime/test/wasm/test_main.cc
     ${ONNXRUNTIME_SOURCE_DIR}/onnxruntime/test/wasm/test_inference.cc
 )
 
+set_target_properties(${PROJECT_NAME} PROPERTIES LINK_FLAGS "\
+    -s ALLOW_MEMORY_GROWTH=1 \
+    -s \"EXPORTED_RUNTIME_METHODS=['FS']\" \
+    --preload-file ${ONNXRUNTIME_SOURCE_DIR}/onnxruntime/test/testdata@/testdata \
+    -s EXIT_RUNTIME=1 \
+")
+
+add_subdirectory(${ONNXRUNTIME_SOURCE_DIR}/cmake/external/googletest external/googletest EXCLUDE_FROM_ALL)
+target_link_libraries(${PROJECT_NAME} GTest::gtest)
+
 target_include_directories(${PROJECT_NAME} PRIVATE ${ONNXRUNTIME_SOURCE_DIR}/include/onnxruntime)
 target_link_directories(${PROJECT_NAME} PRIVATE ${ONNXRUNTIME_LIB_DIR})
-target_link_libraries(${PROJECT_NAME} onnxruntime GTest::gtest)
+target_link_libraries(${PROJECT_NAME} onnxruntime)
 
-set_target_properties(${PROJECT_NAME} PROPERTIES LINK_FLAGS "\
-        -s ALLOW_MEMORY_GROWTH=1 \
-        -s \"EXPORTED_RUNTIME_METHODS=['FS']\" \
-        --preload-file ${ONNXRUNTIME_SOURCE_DIR}/onnxruntime/test/testdata@/testdata \
-        -s EXIT_RUNTIME=1 \
-    ")
-
-find_program(NODE_EXECUTABLE node REQUIRED)
-
-if(NOT NODE_EXECUTABLE)
-    message(FATAL_ERROR "Node is required for a test")
-endif()
-
-add_test(
-    NAME ${PROJECT_NAME}
-    COMMAND ${NODE_EXECUTABLE} ${PROJECT_NAME}.js
-)
+enable_testing()
+add_test(NAME ${PROJECT_NAME} COMMAND node ${PROJECT_NAME}.js)

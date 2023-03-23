@@ -1,4 +1,6 @@
-# Reference: ../onnxruntime/cmake/onnxruntime_webassembly.cmake
+# References:
+# ../onnxruntime/cmake/onnxruntime_webassembly.cmake
+# - https://cristianadam.eu/20190501/bundling-together-static-libraries-with-cmake
 
 function(bundle_static_library bundled_target_name)
     function(recursively_collect_dependencies input_target)
@@ -47,32 +49,44 @@ function(bundle_static_library bundled_target_name)
     set(bundled_target_full_name
         ${CMAKE_BINARY_DIR}/${CMAKE_STATIC_LIBRARY_PREFIX}${bundled_target_name}${CMAKE_STATIC_LIBRARY_SUFFIX})
 
-    file(WRITE ${CMAKE_BINARY_DIR}/${bundled_target_name}.ar.in
-        "CREATE ${bundled_target_full_name}\n")
-
-    foreach(target IN LISTS static_libs)
-        file(APPEND ${CMAKE_BINARY_DIR}/${bundled_target_name}.ar.in
-            "ADDLIB $<TARGET_FILE:${target}>\n")
-    endforeach()
-
-    file(APPEND ${CMAKE_BINARY_DIR}/${bundled_target_name}.ar.in "SAVE\n")
-    file(APPEND ${CMAKE_BINARY_DIR}/${bundled_target_name}.ar.in "END\n")
-
-    file(GENERATE
-        OUTPUT ${CMAKE_BINARY_DIR}/${bundled_target_name}.ar
-        INPUT ${CMAKE_BINARY_DIR}/${bundled_target_name}.ar.in)
-
     set(ar_tool ${CMAKE_AR})
 
     if(CMAKE_INTERPROCEDURAL_OPTIMIZATION)
         set(ar_tool ${CMAKE_CXX_COMPILER_AR})
     endif()
 
-    add_custom_command(
-        COMMAND ${ar_tool} -M < ${CMAKE_BINARY_DIR}/${bundled_target_name}.ar
-        OUTPUT ${bundled_target_full_name}
-        COMMENT "Bundling ${bundled_target_name}"
-        VERBATIM)
+    if(MSVC)
+        foreach(target IN LISTS static_libs)
+            list(APPEND static_lib_full_names $<TARGET_FILE:${target}>)
+        endforeach()
+
+        add_custom_command(
+            COMMAND ${ar_tool} /NOLOGO /OUT:${bundled_target_full_name} ${static_lib_full_names}
+            OUTPUT ${bundled_target_full_name}
+            COMMENT "Bundling ${bundled_target_name}"
+            VERBATIM)
+    else()
+        file(WRITE ${CMAKE_BINARY_DIR}/${bundled_target_name}.ar.in
+            "CREATE ${bundled_target_full_name}\n")
+
+        foreach(target IN LISTS static_libs)
+            file(APPEND ${CMAKE_BINARY_DIR}/${bundled_target_name}.ar.in
+                "ADDLIB $<TARGET_FILE:${target}>\n")
+        endforeach()
+
+        file(APPEND ${CMAKE_BINARY_DIR}/${bundled_target_name}.ar.in "SAVE\n")
+        file(APPEND ${CMAKE_BINARY_DIR}/${bundled_target_name}.ar.in "END\n")
+
+        file(GENERATE
+            OUTPUT ${CMAKE_BINARY_DIR}/${bundled_target_name}.ar
+            INPUT ${CMAKE_BINARY_DIR}/${bundled_target_name}.ar.in)
+
+        add_custom_command(
+            COMMAND ${ar_tool} -M < ${CMAKE_BINARY_DIR}/${bundled_target_name}.ar
+            OUTPUT ${bundled_target_full_name}
+            COMMENT "Bundling ${bundled_target_name}"
+            VERBATIM)
+    endif()
 
     add_custom_target(bundling_target ALL DEPENDS ${bundled_target_full_name})
 
