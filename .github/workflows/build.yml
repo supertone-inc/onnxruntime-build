@@ -18,31 +18,31 @@ jobs:
       fail-fast: false
       matrix:
         include:
-          - archive-name: onnxruntime-linux-x64-static-lib
+          - target: linux-x64-static-lib
             build-type: static-lib
             runs-on: ubuntu-latest
 
-          - archive-name: onnxruntime-osx-x86_64-static-lib
+          - target: osx-x86_64-static-lib
             build-type: static-lib
             runs-on: macos-latest
 
-          - archive-name: onnxruntime-win-x64-static-lib
+          - target: win-x64-static-lib
             build-type: static-lib
             runs-on: windows-latest
 
-          - archive-name: onnxruntime-wasm-static-lib
+          - target: wasm-static-lib
             build-type: wasm-static-lib
             runs-on: ubuntu-latest
 
-          - archive-name: onnxruntime-wasm-static-lib-simd
+          - target: wasm-static-lib-simd
             build-type: wasm-static-lib-simd
             runs-on: ubuntu-latest
 
-          - archive-name: onnxruntime-wasm-static-lib-threaded
+          - target: wasm-static-lib-threaded
             build-type: wasm-static-lib-threaded
             runs-on: ubuntu-latest
 
-          - archive-name: onnxruntime-wasm-static-lib-simd-threaded
+          - target: wasm-static-lib-simd-threaded
             build-type: wasm-static-lib-simd-threaded
             runs-on: ubuntu-latest
 
@@ -55,7 +55,7 @@ jobs:
           submodules: true
 
       - name: Get ONNX Runtime Version
-        run: echo "ONNXRUNTIME_VERSION=$(cat onnxruntime/VERSION_NUMBER)" >> $GITHUB_ENV
+        run: echo ONNXRUNTIME_VERSION=$(cat onnxruntime/VERSION_NUMBER) >> $GITHUB_ENV
 
       - name: Check Version
         if: startsWith(github.ref, 'refs/tags/v')
@@ -74,20 +74,23 @@ jobs:
       - name: Build
         run: ./build-${{ matrix.build-type }}.sh
 
+      - name: Set Archive Name
+        run: echo ARCHIVE_NAME=onnxruntime-${{ matrix.target }}-${{ env.ONNXRUNTIME_VERSION }} >> $GITHUB_ENV
+
       - name: Archive
         if: runner.os != 'Windows'
         working-directory: outputs/${{ matrix.build-type }}
-        run: tar cvfz ${{ runner.temp }}/${{ matrix.archive-name }}-${{ env.ONNXRUNTIME_VERSION }}.tgz .
+        run: tar cvfz ${{ runner.temp }}/${{ env.ARCHIVE_NAME }}.tgz .
 
       - name: Archive
         if: runner.os == 'Windows'
         working-directory: outputs/${{ matrix.build-type }}
-        run: 7z a ${{ runner.temp }}/${{ matrix.archive-name }}-${{ env.ONNXRUNTIME_VERSION }}.zip .
+        run: 7z a ${{ runner.temp }}/${{ env.ARCHIVE_NAME }}.zip .
 
       - name: Upload Artifact
         uses: actions/upload-artifact@v3
         with:
-          name: ${{ matrix.archive-name }}-${{ env.ONNXRUNTIME_VERSION }}
+          name: ${{ env.ARCHIVE_NAME }}
           path: ${{ runner.temp }}/*
 
   release:
