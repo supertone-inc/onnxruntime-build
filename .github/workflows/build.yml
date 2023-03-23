@@ -65,6 +65,12 @@ jobs:
         if: runner.os == 'macOS'
         run: brew install coreutils
 
+      - name: Setup Node
+        if: startsWith(matrix.build-type, 'wasm')
+        uses: actions/setup-node@v3
+        with:
+          node-version: 16
+
       - name: Build
         run: ./build-${{ matrix.build-type }}.sh
 
