@@ -99,21 +99,21 @@ jobs:
       - name: Set Archive Name
         run: echo ARCHIVE_NAME=onnxruntime-${{ matrix.target }}-${{ env.ONNXRUNTIME_VERSION }} >> $GITHUB_ENV
 
-      - name: Archive
+      - name: Archive (UNIX)
         if: runner.os != 'Windows'
         working-directory: outputs/${{ matrix.build-type }}
         run: tar cvfz ${{ runner.temp }}/${{ env.ARCHIVE_NAME }}.tgz .
 
-      - name: Archive
+      - name: Archive (Windows)
         if: runner.os == 'Windows'
         working-directory: outputs/${{ matrix.build-type }}
-        run: 7z a ${{ runner.temp }}\${{ env.ARCHIVE_NAME }}.zip .
+        run: 7z a "${{ runner.temp }}\${{ env.ARCHIVE_NAME }}.zip" .
 
       - name: Upload Artifact
         uses: actions/upload-artifact@v3
         with:
           name: ${{ env.ARCHIVE_NAME }}
-          path: ${{ runner.temp }}/*
+          path: ${{ runner.temp }}/${{ env.ARCHIVE_NAME }}.*
 
   release:
     name: Release
