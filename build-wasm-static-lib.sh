@@ -39,6 +39,11 @@ if [ $SKIP_TESTS = true ]; then
     exit 0
 fi
 
+case $(uname -s) in
+Darwin | Linux) ;;
+*) export CMAKE_GENERATOR=Ninja ;;
+esac
+
 cmake \
     -S wasm-static-lib/tests \
     -B $BUILD_DIR/tests \
