@@ -54,7 +54,7 @@ function(bundle_static_library bundled_target_name)
             list(APPEND static_lib_full_names $<TARGET_FILE:${target}>)
         endforeach()
 
-        find_program(lib lib)
+        set(lib ${CMAKE_AR})
 
         add_custom_command(
             COMMAND ${lib} /NOLOGO /OUT:${bundled_target_full_name} ${static_lib_full_names}
