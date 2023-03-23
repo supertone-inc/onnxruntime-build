@@ -10,9 +10,18 @@ OUTPUT_DIR=outputs/static-lib
 ONNXRUNTIME_SOURCE_DIR=onnxruntime
 
 case $(uname -s) in
-Darwin) CPU_COUNT=$(sysctl -n hw.physicalcpu) ;;
-Linux) CPU_COUNT=$(grep ^cpu\\scores /proc/cpuinfo | uniq | awk '{print $4}') ;;
-*) CPU_COUNT=$NUMBER_OF_PROCESSORS ;;
+Darwin)
+    CPU_COUNT=$(sysctl -n hw.physicalcpu)
+    CMAKE_BUILD_OPTIONS="--parallel $CPU_COUNT"
+    ;;
+Linux)
+    CPU_COUNT=$(grep ^cpu\\scores /proc/cpuinfo | uniq | awk '{print $4}')
+    CMAKE_BUILD_OPTIONS="--parallel $CPU_COUNT"
+    ;;
+*)
+    CPU_COUNT=$NUMBER_OF_PROCESSORS
+    CMAKE_BUILD_OPTIONS="-- /maxcpucount:$CPU_COUNT /nodeReuse:False"
+    ;;
 esac
 
 cmake \
@@ -22,7 +31,7 @@ cmake \
     -D CMAKE_CONFIGURATION_TYPES=Release \
     -D CMAKE_INSTALL_PREFIX=$OUTPUT_DIR \
     -D ONNXRUNTIME_SOURCE_DIR=$(realpath $ONNXRUNTIME_SOURCE_DIR)
-cmake --build $BUILD_DIR --config Release --parallel $CPU_COUNT
+cmake --build $BUILD_DIR --config Release $CMAKE_BUILD_OPTIONS
 cmake --install $BUILD_DIR --config Release
 
 cmake \
