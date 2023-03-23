@@ -20,8 +20,8 @@ cmake \
     -B $BUILD_DIR \
     -D CMAKE_BUILD_TYPE=Release \
     -D CMAKE_CONFIGURATION_TYPES=Release \
-    -D ONNXRUNTIME_SOURCE_DIR=$(realpath $ONNXRUNTIME_SOURCE_DIR) \
-    -D CMAKE_INSTALL_PREFIX=$OUTPUT_DIR
+    -D CMAKE_INSTALL_PREFIX=$OUTPUT_DIR \
+    -D ONNXRUNTIME_SOURCE_DIR=$(realpath $ONNXRUNTIME_SOURCE_DIR)
 cmake --build $BUILD_DIR --config Release --parallel $CPU_COUNT
 cmake --install $BUILD_DIR --config Release
 
