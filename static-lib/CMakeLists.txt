@@ -1,9 +1,11 @@
 cmake_minimum_required(VERSION 3.24)
 project(onnxruntime_static_lib)
 
-file(STRINGS ${ONNXRUNTIME_SOURCE_DIR}/VERSION_NUMBER ONNXRUNTIME_VERSION)
-
+set(CMAKE_MSVC_RUNTIME_LIBRARY MultiThreaded)
+set(ONNX_USE_MSVC_STATIC_RUNTIME ON)
+set(protobuf_MSVC_STATIC_RUNTIME ON)
 set(onnxruntime_BUILD_SHARED_LIB ON)
+
 add_subdirectory(${ONNXRUNTIME_SOURCE_DIR}/cmake onnxruntime EXCLUDE_FROM_ALL)
 get_target_property(libraries onnxruntime LINK_LIBRARIES)
 list(REMOVE_ITEM libraries
@@ -29,6 +31,7 @@ install(
 )
 
 if(UNIX)
+    file(STRINGS ${ONNXRUNTIME_SOURCE_DIR}/VERSION_NUMBER ONNXRUNTIME_VERSION)
     install(
         FILES ${CMAKE_CURRENT_BINARY_DIR}/lib${PROJECT_NAME}.a
         RENAME libonnxruntime.${ONNXRUNTIME_VERSION}.a

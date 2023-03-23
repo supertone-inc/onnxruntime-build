@@ -1,7 +1,7 @@
 cmake_minimum_required(VERSION 3.24)
 project(tests)
 
-set(CMAKE_MSVC_RUNTIME_LIBRARY MultiThreadedDLL)
+set(CMAKE_MSVC_RUNTIME_LIBRARY MultiThreaded)
 
 add_executable(${PROJECT_NAME}
     ${ONNXRUNTIME_SOURCE_DIR}/onnxruntime/test/wasm/test_main.cc
