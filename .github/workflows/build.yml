@@ -6,6 +6,11 @@ on:
     tags:
       - v*.*.*
 
+env:
+  CMAKE_VERSION: 3.24
+  PYTHON_VERSION: 3.9
+  NODE_VERSION: 16
+
 defaults:
   run:
     shell: bash
@@ -61,15 +66,25 @@ jobs:
         if: startsWith(github.ref, 'refs/tags/v')
         run: if [ "$ONNXRUNTIME_VERSION" != "${GITHUB_REF_NAME#v}" ]; then exit 1; fi
 
-      - name: Install Coreutils
-        if: runner.os == 'macOS'
-        run: brew install coreutils
+      - name: Setup CMake
+        uses: lukka/get-cmake@v3.26.0
+        with:
+          cmakeVersion: ${{ env.CMAKE_VERSION }}
+
+      - name: Setup Python
+        uses: actions/setup-python@v4
+        with:
+          python-version: ${{ env.PYTHON_VERSION }}
 
       - name: Setup Node
         if: startsWith(matrix.build-type, 'wasm')
         uses: actions/setup-node@v3
         with:
-          node-version: 16
+          node-version: ${{ env.NODE_VERSION }}
+
+      - name: Install Coreutils
+        if: runner.os == 'macOS'
+        run: brew install coreutils
 
       - name: Build
         run: ./build-${{ matrix.build-type }}.sh
