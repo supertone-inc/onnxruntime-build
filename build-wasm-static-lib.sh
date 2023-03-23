@@ -17,7 +17,6 @@ BUILD_OPTIONS="\
     --parallel \
     $BUILD_OPTIONS \
 "
-SKIP_TESTS=${SKIP_TESTS:=false}
 ONNXRUNTIME_SOURCE_DIR=onnxruntime
 ONNXRUNTIME_VERSION=$(cat $ONNXRUNTIME_SOURCE_DIR/VERSION_NUMBER)
 EMSDK_DIR=$ONNXRUNTIME_SOURCE_DIR/cmake/external/emsdk
@@ -34,10 +33,6 @@ cp $ONNXRUNTIME_SOURCE_DIR/include/onnxruntime/core/session/onnxruntime_cxx_inli
 mkdir -p $OUTPUT_DIR/lib
 cp $BUILD_DIR/Release/libonnxruntime_webassembly.a $OUTPUT_DIR/lib/lib$LIB_NAME.$ONNXRUNTIME_VERSION.a
 ln -sf lib$LIB_NAME.$ONNXRUNTIME_VERSION.a $OUTPUT_DIR/lib/libonnxruntime.a
-
-if [ $SKIP_TESTS = true ]; then
-    exit 0
-fi
 
 case $(uname -s) in
 Darwin | Linux) ;;

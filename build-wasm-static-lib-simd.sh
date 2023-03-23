@@ -5,6 +5,5 @@ set -e
 LIB_NAME=onnxruntime_webassembly_simd
 OUTPUT_DIR=outputs/wasm-static-lib-simd
 BUILD_OPTIONS=--enable_wasm_simd
-SKIP_TESTS=true
 
 source ./build-wasm-static-lib.sh
