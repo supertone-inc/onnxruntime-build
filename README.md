@@ -1,8 +1,8 @@
 # ONNX Runtime Custom Build
 
-This project is to build custom [ONNX Runtime](https://onnxruntime.ai) libraries which are not provided in official releases.
+This project is to build custom [ONNX Runtime](https://onnxruntime.ai) libraries which are not provided in [the official releases](https://github.com/microsoft/onnxruntime/releases).
 
-Currently supports static library builds only with default options.
+Currently supports static library builds only with the default options.
 
 ## Building Libraries
 
