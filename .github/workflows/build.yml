@@ -49,11 +49,6 @@ jobs:
     runs-on: ${{ matrix.runs-on }}
 
     steps:
-      - name: Print `github` Context
-        env:
-          GITHUB_CONTEXT: ${{ toJSON(github) }}
-        run: echo "$GITHUB_CONTEXT"
-
       - name: Checkout
         uses: actions/checkout@v3
         with:
