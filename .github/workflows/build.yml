@@ -85,7 +85,7 @@ jobs:
       - name: Archive
         if: runner.os == 'Windows'
         working-directory: outputs/${{ matrix.build-type }}
-        run: 7z a ${{ runner.temp }}/${{ env.ARCHIVE_NAME }}.zip .
+        run: 7z a ${{ runner.temp }}\${{ env.ARCHIVE_NAME }}.zip .
 
       - name: Upload Artifact
         uses: actions/upload-artifact@v3
