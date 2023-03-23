@@ -41,7 +41,7 @@ fi
 
 case $(uname -s) in
 Darwin | Linux) ;;
-*) export CMAKE_GENERATOR=Ninja ;;
+*) CMAKE_OPTIONS="-G Ninja" ;;
 esac
 
 cmake \
@@ -49,6 +49,7 @@ cmake \
     -B $BUILD_DIR/tests \
     -D ONNXRUNTIME_SOURCE_DIR=$(realpath $ONNXRUNTIME_SOURCE_DIR) \
     -D ONNXRUNTIME_LIB_DIR=$(realpath $OUTPUT_DIR/lib) \
-    -D CMAKE_TOOLCHAIN_FILE=$(realpath $EMSDK_DIR/upstream/emscripten/cmake/Modules/Platform/Emscripten.cmake)
+    -D CMAKE_TOOLCHAIN_FILE=$(realpath $EMSDK_DIR/upstream/emscripten/cmake/Modules/Platform/Emscripten.cmake) \
+    $CMAKE_OPTIONS
 cmake --build $BUILD_DIR/tests --clean-first
 ctest --test-dir $BUILD_DIR/tests --verbose --no-tests=error
