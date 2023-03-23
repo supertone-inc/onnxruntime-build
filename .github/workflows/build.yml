@@ -2,8 +2,13 @@ name: Build
 
 on:
   workflow_dispatch:
-  release:
-    types: [published]
+  push:
+    tags:
+      - v*.*.*
+
+defaults:
+  run:
+    shell: bash
 
 jobs:
   build:
@@ -13,16 +18,32 @@ jobs:
       fail-fast: false
       matrix:
         include:
-          - target: wasm-static-lib
+          - archive-name: onnxruntime-linux-x64-static-lib
+            build-type: static-lib
             runs-on: ubuntu-latest
 
-          - target: wasm-static-lib-simd
+          - archive-name: onnxruntime-osx-x86_64-static-lib
+            build-type: static-lib
+            runs-on: macos-latest
+
+          - archive-name: onnxruntime-win-x64-static-lib
+            build-type: static-lib
+            runs-on: windows-latest
+
+          - archive-name: onnxruntime-wasm-static-lib
+            build-type: wasm-static-lib
             runs-on: ubuntu-latest
 
-          - target: wasm-static-lib-threaded
+          - archive-name: onnxruntime-wasm-static-lib-simd
+            build-type: wasm-static-lib-simd
             runs-on: ubuntu-latest
 
-          - target: wasm-static-lib-simd-threaded
+          - archive-name: onnxruntime-wasm-static-lib-threaded
+            build-type: wasm-static-lib-threaded
+            runs-on: ubuntu-latest
+
+          - archive-name: onnxruntime-wasm-static-lib-simd-threaded
+            build-type: wasm-static-lib-simd-threaded
             runs-on: ubuntu-latest
 
     runs-on: ${{ matrix.runs-on }}
@@ -36,44 +57,37 @@ jobs:
       - name: Checkout
         uses: actions/checkout@v3
         with:
-          submodules: recursive
+          submodules: true
+
+      - name: Get ONNX Runtime Version
+        run: echo "ONNXRUNTIME_VERSION=$(cat onnxruntime/VERSION_NUMBER)" >> $GITHUB_ENV
+
+      - name: Check Version
+        if: startsWith(github.ref, 'refs/tags/v')
+        run: if [ "$ONNXRUNTIME_VERSION" != "${GITHUB_REF_NAME#v}" ]; then exit 1; fi
 
       - name: Build
-        run: ./build-${{ matrix.target }}.sh
+        run: ./build-${{ matrix.build-type }}.sh
 
       - name: Archive
-        if: github.event_name != 'release'
-        working-directory: outputs/${{ matrix.target }}
-        run: >-
-          tar cvfz
-          ${{ runner.temp }}/onnxruntime-${{ matrix.target }}-${{ github.sha }}.tgz
-          .
+        if: runner.os != 'Windows'
+        working-directory: outputs/${{ matrix.build-type }}
+        run: tar cvfz ${{ runner.temp }}/${{ matrix.archive-name }}-${{ env.ONNXRUNTIME_VERSION }}.tgz .
+
+      - name: Archive
+        if: runner.os == 'Windows'
+        working-directory: outputs/${{ matrix.build-type }}
+        run: 7z a ${{ runner.temp }}/${{ matrix.archive-name }}-${{ env.ONNXRUNTIME_VERSION }}.zip .
 
       - name: Upload Artifact
-        if: github.event_name != 'release'
         uses: actions/upload-artifact@v3
         with:
-          name: onnxruntime-${{ matrix.target }}-${{ github.sha }}
-          path: ${{ runner.temp }}/*.tgz
-
-      - name: Archive Release
-        if: github.event_name == 'release'
-        working-directory: outputs/${{ matrix.target }}
-        run: >-
-          tar cvfz
-          ${{ runner.temp }}/onnxruntime-${{ matrix.target }}-${{ github.event.release.tag_name }}.tgz
-          .
-
-      - name: Upload Release Artifact
-        if: github.event_name == 'release'
-        uses: actions/upload-artifact@v3
-        with:
-          name: onnxruntime-${{ matrix.target }}-${{ github.event.release.tag_name }}
-          path: ${{ runner.temp }}/*.tgz
+          name: ${{ matrix.archive-name }}-${{ env.ONNXRUNTIME_VERSION }}
+          path: ${{ runner.temp }}/*
 
   release:
     name: Release
-    if: github.event_name == 'release'
+    if: startsWith(github.ref, 'refs/tags/v')
     needs: build
     runs-on: ubuntu-latest
     steps:
@@ -83,10 +97,6 @@ jobs:
       - name: Release
         uses: ncipollo/release-action@v1
         with:
-          token: ${{ secrets.GITHUB_TOKEN }}
-          name: ${{ github.event.release.name }}
-          body: ${{ github.event.release.body }}
+          body: "Official Release: [ONNX Runtime ${{ env.GITHUB_REF_NAME }}](https://github.com/microsoft/onnxruntime/releases/tag/${{ env.GITHUB_REF_NAME }})"
           artifacts: "*"
-          prerelease: ${{ github.event.release.prerelease }}
-          draft: ${{ github.event.release.draft }}
           allowUpdates: true
