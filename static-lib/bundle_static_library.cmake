@@ -49,19 +49,27 @@ function(bundle_static_library bundled_target_name)
     set(bundled_target_full_name
         ${CMAKE_BINARY_DIR}/${CMAKE_STATIC_LIBRARY_PREFIX}${bundled_target_name}${CMAKE_STATIC_LIBRARY_SUFFIX})
 
-    set(ar_tool ${CMAKE_AR})
-
-    if(CMAKE_INTERPROCEDURAL_OPTIMIZATION)
-        set(ar_tool ${CMAKE_CXX_COMPILER_AR})
-    endif()
-
     if(MSVC)
         foreach(target IN LISTS static_libs)
             list(APPEND static_lib_full_names $<TARGET_FILE:${target}>)
         endforeach()
 
+        find_program(lib lib)
+
         add_custom_command(
-            COMMAND ${ar_tool} /NOLOGO /OUT:${bundled_target_full_name} ${static_lib_full_names}
+            COMMAND ${lib} /NOLOGO /OUT:${bundled_target_full_name} ${static_lib_full_names}
+            OUTPUT ${bundled_target_full_name}
+            COMMENT "Bundling ${bundled_target_name}"
+            VERBATIM)
+    elseif(APPLE)
+        foreach(target IN LISTS static_libs)
+            list(APPEND static_lib_full_names $<TARGET_FILE:${target}>)
+        endforeach()
+
+        find_program(libtool libtool)
+
+        add_custom_command(
+            COMMAND ${libtool} -static -o ${bundled_target_full_name} ${static_lib_full_names}
             OUTPUT ${bundled_target_full_name}
             COMMENT "Bundling ${bundled_target_name}"
             VERBATIM)
@@ -81,8 +89,14 @@ function(bundle_static_library bundled_target_name)
             OUTPUT ${CMAKE_BINARY_DIR}/${bundled_target_name}.ar
             INPUT ${CMAKE_BINARY_DIR}/${bundled_target_name}.ar.in)
 
+        set(ar ${CMAKE_AR})
+
+        if(CMAKE_INTERPROCEDURAL_OPTIMIZATION)
+            set(ar ${CMAKE_CXX_COMPILER_AR})
+        endif()
+
         add_custom_command(
-            COMMAND ${ar_tool} -M < ${CMAKE_BINARY_DIR}/${bundled_target_name}.ar
+            COMMAND ${ar} -M < ${CMAKE_BINARY_DIR}/${bundled_target_name}.ar
             OUTPUT ${bundled_target_full_name}
             COMMENT "Bundling ${bundled_target_name}"
             VERBATIM)
