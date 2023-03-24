@@ -59,13 +59,6 @@ jobs:
         with:
           submodules: true
 
-      - name: Get ONNX Runtime version
-        run: echo ONNXRUNTIME_VERSION=$(cat onnxruntime/VERSION_NUMBER) >> $GITHUB_ENV
-
-      - name: Check version
-        if: startsWith(github.ref, 'refs/tags/v')
-        run: if [ "$ONNXRUNTIME_VERSION" != "${GITHUB_REF_NAME#v}" ]; then exit 1; fi
-
       - name: Setup CMake
         uses: lukka/get-cmake@v3.26.0
         with:
@@ -85,6 +78,14 @@ jobs:
       - name: Install Coreutils
         if: runner.os == 'macOS'
         run: brew install coreutils
+
+      - name: Set ONNX Runtime version
+        run: |
+          if ${{ startsWith(github.ref, 'refs/tags/v') }}; then
+            echo ONNXRUNTIME_VERSION=${GITHUB_REF_NAME#v} >> $GITHUB_ENV
+          else
+            echo ONNXRUNTIME_VERSION=$(cat onnxruntime/VERSION_NUMBER) >> $GITHUB_ENV
+          fi
 
       - name: Build
         run: ./build-${{ matrix.build-type }}.sh

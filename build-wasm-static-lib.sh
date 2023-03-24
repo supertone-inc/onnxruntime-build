@@ -2,7 +2,7 @@
 
 set -e
 
-git submodule update --init --recursive
+git submodule update --init --force --depth=1
 
 LIB_NAME=${LIB_NAME:=onnxruntime_webassembly}
 BUILD_DIR=build/wasm-static-lib
@@ -18,8 +18,19 @@ BUILD_OPTIONS="\
     $BUILD_OPTIONS \
 "
 ONNXRUNTIME_SOURCE_DIR=onnxruntime
-ONNXRUNTIME_VERSION=$(cat $ONNXRUNTIME_SOURCE_DIR/VERSION_NUMBER)
+ONNXRUNTIME_VERSION=${ONNXRUNTIME_VERSION:=$(cat $ONNXRUNTIME_SOURCE_DIR/VERSION_NUMBER)}
 EMSDK_DIR=$ONNXRUNTIME_SOURCE_DIR/cmake/external/emsdk
+
+(
+    cd $ONNXRUNTIME_SOURCE_DIR
+
+    if [ $ONNXRUNTIME_VERSION != $(cat VERSION_NUMBER) ]; then
+        git fetch origin tag v$ONNXRUNTIME_VERSION
+        git checkout v$ONNXRUNTIME_VERSION
+    fi
+
+    git submodule update --init --force --depth=1 --recursive
+)
 
 rm -f $BUILD_DIR/Release/libonnxruntime_webassembly.a
 

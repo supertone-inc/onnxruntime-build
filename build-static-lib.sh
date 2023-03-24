@@ -2,12 +2,24 @@
 
 set -e
 
-git submodule update --init --recursive
+git submodule update --init --force --depth=1
 
 SOURCE_DIR=static-lib
 BUILD_DIR=build/static-lib
 OUTPUT_DIR=outputs/static-lib
 ONNXRUNTIME_SOURCE_DIR=onnxruntime
+ONNXRUNTIME_VERSION=${ONNXRUNTIME_VERSION:=$(cat $ONNXRUNTIME_SOURCE_DIR/VERSION_NUMBER)}
+
+(
+    cd $ONNXRUNTIME_SOURCE_DIR
+
+    if [ $ONNXRUNTIME_VERSION != $(cat VERSION_NUMBER) ]; then
+        git fetch origin tag v$ONNXRUNTIME_VERSION
+        git checkout v$ONNXRUNTIME_VERSION
+    fi
+
+    git submodule update --init --force --depth=1 --recursive
+)
 
 case $(uname -s) in
 Darwin)
