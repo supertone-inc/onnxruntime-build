@@ -121,5 +121,5 @@ jobs:
         uses: ncipollo/release-action@v1
         with:
           body: "Official Release: [ONNX Runtime ${{ github.ref_name }}](https://github.com/microsoft/onnxruntime/releases/tag/${{ github.ref_name }})"
-          artifacts: ./**/*.*
+          artifacts: "**/*.*"
           allowUpdates: true
