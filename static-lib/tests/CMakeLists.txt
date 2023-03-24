@@ -15,7 +15,9 @@ target_include_directories(${PROJECT_NAME} PRIVATE ${ONNXRUNTIME_SOURCE_DIR}/inc
 target_link_directories(${PROJECT_NAME} PRIVATE ${ONNXRUNTIME_LIB_DIR})
 target_link_libraries(${PROJECT_NAME} onnxruntime)
 
-if(UNIX AND NOT APPLE)
+if(APPLE)
+    target_link_libraries(${PROJECT_NAME} "-framework Foundation")
+elseif(UNIX)
     target_link_libraries(${PROJECT_NAME} dl)
 endif()
 
