@@ -114,12 +114,12 @@ jobs:
     needs: build
     runs-on: ubuntu-latest
     steps:
-      - name: Download artifact
+      - name: Download artifacts
         uses: actions/download-artifact@v3
 
       - name: Release
         uses: ncipollo/release-action@v1
         with:
           body: "Official Release: [ONNX Runtime ${{ github.ref_name }}](https://github.com/microsoft/onnxruntime/releases/tag/${{ github.ref_name }})"
-          artifacts: "*"
+          artifacts: ./**/*.*
           allowUpdates: true
