@@ -1,4 +1,4 @@
-# ONNX Runtime Custom Build
+# ONNX Runtime Build
 
 This project is to build custom [ONNX Runtime](https://onnxruntime.ai) libraries which are not provided in [the official releases](https://github.com/microsoft/onnxruntime/releases).
 
