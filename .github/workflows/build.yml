@@ -33,7 +33,7 @@ jobs:
 
           - target: win-x64-static-lib
             build-type: static-lib
-            runs-on: windows-latest
+            runs-on: windows-2019
 
           - target: wasm-static-lib
             build-type: wasm-static-lib
