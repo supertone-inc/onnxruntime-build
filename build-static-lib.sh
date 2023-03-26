@@ -51,5 +51,5 @@ cmake \
     -B $BUILD_DIR/tests \
     -D ONNXRUNTIME_SOURCE_DIR=$(realpath $ONNXRUNTIME_SOURCE_DIR) \
     -D ONNXRUNTIME_LIB_DIR=$(realpath $OUTPUT_DIR/lib)
-cmake --build $BUILD_DIR/tests --clean-first
+cmake --build $BUILD_DIR/tests
 ctest --test-dir $BUILD_DIR/tests --build-config Debug --verbose --no-tests=error
