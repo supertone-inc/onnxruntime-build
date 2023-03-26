@@ -13,7 +13,14 @@ set_target_properties(${PROJECT_NAME} PROPERTIES LINK_FLAGS "\
     -s EXIT_RUNTIME=1 \
 ")
 
-add_subdirectory(${ONNXRUNTIME_SOURCE_DIR}/cmake/external/googletest external/googletest EXCLUDE_FROM_ALL)
+include(FetchContent)
+FetchContent_Declare(
+    googletest
+    URL https://github.com/google/googletest/archive/519beb0e52c842729b4b53731d27c0e0c32ab4a2.zip
+    FIND_PACKAGE_ARGS NAMES GTest
+    URL_HASH SHA1=4b3c37972e4c1bef1185d46f702082f8772ee73f
+)
+FetchContent_MakeAvailable(googletest)
 target_link_libraries(${PROJECT_NAME} GTest::gtest)
 
 target_include_directories(${PROJECT_NAME} PRIVATE ${ONNXRUNTIME_SOURCE_DIR}/include/onnxruntime)

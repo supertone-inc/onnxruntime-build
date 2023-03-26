@@ -17,6 +17,15 @@ list(REMOVE_ITEM libraries
     absl::node_hash_set
     absl::node_hash_map
     $<$<CONFIG:DEBUG>:Dbghelp>
+
+    # v1.14.1
+    rt
+    WIL::WIL
+    nlohmann_json::nlohmann_json
+    Boost::mp11
+    safeint_interface
+    Microsoft.GSL::GSL
+    date_interface
 )
 
 include(bundle_static_library.cmake)
