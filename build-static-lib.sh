@@ -2,7 +2,7 @@
 
 set -e
 
-git submodule update --init --force --depth=1
+git submodule update --init --depth=1
 
 SOURCE_DIR=static-lib
 BUILD_DIR=build/static-lib
@@ -18,7 +18,7 @@ ONNXRUNTIME_VERSION=${ONNXRUNTIME_VERSION:=$(cat $ONNXRUNTIME_SOURCE_DIR/VERSION
         git checkout v$ONNXRUNTIME_VERSION
     fi
 
-    git submodule update --init --force --depth=1 --recursive
+    git submodule update --init --depth=1 --recursive
 )
 
 case $(uname -s) in

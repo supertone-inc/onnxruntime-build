@@ -2,7 +2,7 @@
 
 set -e
 
-git submodule update --init --force --depth=1
+git submodule update --init --depth=1
 
 LIB_NAME=${LIB_NAME:=onnxruntime_webassembly}
 BUILD_DIR=build/wasm-static-lib
@@ -29,7 +29,7 @@ EMSDK_DIR=$ONNXRUNTIME_SOURCE_DIR/cmake/external/emsdk
         git checkout v$ONNXRUNTIME_VERSION
     fi
 
-    git submodule update --init --force --depth=1 --recursive
+    git submodule update --init --depth=1 --recursive
 )
 
 rm -f $BUILD_DIR/Release/libonnxruntime_webassembly.a
