@@ -23,7 +23,7 @@ target_link_directories(${PROJECT_NAME} PRIVATE ${ONNXRUNTIME_LIB_DIR})
 target_link_libraries(${PROJECT_NAME} onnxruntime)
 
 if(APPLE)
-    target_link_libraries(${PROJECT_NAME} "-framework Foundation")
+    target_link_libraries(${PROJECT_NAME} "-framework CoreFoundation")
 elseif(UNIX)
     target_link_libraries(${PROJECT_NAME} dl)
 endif()
