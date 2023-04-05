@@ -25,17 +25,17 @@ case $(uname -s) in
 Darwin)
     CPU_COUNT=$(sysctl -n hw.physicalcpu)
     PARALLEL_JOB_COUNT=${PARALLEL_JOB_COUNT:=$CPU_COUNT}
-    CMAKE_BUILD_OPTIONS="--parallel $PARALLEL_JOB_COUNT"
+    CMAKE_BUILD_OPTIONS="$CMAKE_BUILD_OPTIONS --parallel $PARALLEL_JOB_COUNT"
     ;;
 Linux)
     CPU_COUNT=$(grep ^cpu\\scores /proc/cpuinfo | uniq | awk '{print $4}')
     PARALLEL_JOB_COUNT=${PARALLEL_JOB_COUNT:=$CPU_COUNT}
-    CMAKE_BUILD_OPTIONS="--parallel $PARALLEL_JOB_COUNT"
+    CMAKE_BUILD_OPTIONS="$CMAKE_BUILD_OPTIONS --parallel $PARALLEL_JOB_COUNT"
     ;;
 *)
     CPU_COUNT=$NUMBER_OF_PROCESSORS
     PARALLEL_JOB_COUNT=${PARALLEL_JOB_COUNT:=$CPU_COUNT}
-    CMAKE_BUILD_OPTIONS="-- /maxcpucount:$PARALLEL_JOB_COUNT /nodeReuse:False"
+    CMAKE_BUILD_OPTIONS="$CMAKE_BUILD_OPTIONS -- /maxcpucount:$PARALLEL_JOB_COUNT /nodeReuse:False"
     ;;
 esac
 
@@ -45,7 +45,8 @@ cmake \
     -D CMAKE_BUILD_TYPE=Release \
     -D CMAKE_CONFIGURATION_TYPES=Release \
     -D CMAKE_INSTALL_PREFIX=$OUTPUT_DIR \
-    -D ONNXRUNTIME_SOURCE_DIR=$(realpath $ONNXRUNTIME_SOURCE_DIR)
+    -D ONNXRUNTIME_SOURCE_DIR=$(realpath $ONNXRUNTIME_SOURCE_DIR) \
+    $CMAKE_OPTIONS
 cmake --build $BUILD_DIR --config Release $CMAKE_BUILD_OPTIONS
 cmake --install $BUILD_DIR --config Release
 
