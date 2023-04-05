@@ -74,7 +74,6 @@ jobs:
           python-version: ${{ vars.PYTHON_VERSION }}
 
       - name: Check Python
-        if: runner.arch == 'ARM64'
         id: check-python
         continue-on-error: true
         run: |
@@ -82,7 +81,7 @@ jobs:
           python -m ensurepip --version
           echo "python-version=$(python --version | cut -d " " -f2)" >> $GITHUB_OUTPUT
 
-      - name: Install Python
+      - name: Install Python (Linux ARM64)
         if: >
           runner.os == 'Linux' && runner.arch == 'ARM64' &&
           (
@@ -99,7 +98,7 @@ jobs:
             python${{ vars.PYTHON_VERSION }}-venv
           sudo update-alternatives --install /usr/bin/python python /usr/bin/python${{ vars.PYTHON_VERSION }} 1
 
-      - name: Install Python
+      - name: Install Python (macOS ARM64)
         if: >
           runner.os == 'macOS' && runner.arch == 'ARM64' &&
           (
