@@ -73,13 +73,13 @@ jobs:
           cmakeVersion: ${{ env.CMAKE_VERSION }}
 
       - name: Setup Python
-        if: "!(runner.os == 'Linux' && runner.arch == 'ARM64')"
+        if: runner.arch != 'ARM64'
         uses: actions/setup-python@v4
         with:
           python-version: ${{ env.PYTHON_VERSION }}
 
       - name: Check Python
-        if: runner.os == 'Linux' && runner.arch == 'ARM64'
+        if: runner.arch == 'ARM64'
         id: check-python
         continue-on-error: true
         run: |
@@ -103,6 +103,15 @@ jobs:
             python${{ env.PYTHON_VERSION }}-distutils \
             python${{ env.PYTHON_VERSION }}-venv
           sudo update-alternatives --install /usr/bin/python python /usr/bin/python${{ env.PYTHON_VERSION }} 1
+
+      - name: Install Python
+        if: >
+          runner.os == 'macOS' && runner.arch == 'ARM64' &&
+          (
+            steps.check-python.outcome	== 'failure' ||
+            !startsWith(steps.check-python.outputs.python-version, env.PYTHON_VERSION)
+          )
+        run: brew install python@${{ env.PYTHON_VERSION }}
 
       - name: Setup Node
         if: startsWith(matrix.build-type, 'wasm')
