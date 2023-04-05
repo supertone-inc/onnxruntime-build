@@ -10,6 +10,7 @@ env:
   CMAKE_VERSION: 3.24
   PYTHON_VERSION: 3.9
   NODE_VERSION: 16
+  XCODE_VERSION: 14.2
 
 defaults:
   run:
@@ -33,7 +34,7 @@ jobs:
 
           - target: osx-arm64-static-lib
             build-type: static-lib
-            runs-on: ghcr.io/cirruslabs/macos-ventura-xcode:latest
+            runs-on: ghcr.io/cirruslabs/macos-ventura-xcode:${{ env.XCODE_VERSION }}
 
           - target: osx-x86_64-static-lib
             build-type: static-lib
@@ -118,6 +119,12 @@ jobs:
         uses: actions/setup-node@v3
         with:
           node-version: ${{ env.NODE_VERSION }}
+
+      - name: Setup Xcode
+        if: runner.os == 'macOS'
+        uses: maxim-lobanov/setup-xcode@v1
+        with:
+          xcode-version: ${{ env.XCODE_VERSION }}
 
       - name: Install Coreutils
         if: runner.os == 'macOS'
