@@ -23,6 +23,10 @@ jobs:
       fail-fast: false
       matrix:
         include:
+          - target: linux-aarch64-static-lib
+            build-type: static-lib
+            runs-on: buildjet-4vcpu-ubuntu-2204-arm
+
           - target: linux-x64-static-lib
             build-type: static-lib
             runs-on: ubuntu-latest
