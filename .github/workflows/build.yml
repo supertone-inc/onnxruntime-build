@@ -73,9 +73,36 @@ jobs:
           cmakeVersion: ${{ env.CMAKE_VERSION }}
 
       - name: Setup Python
+        if: "!(runner.os == 'Linux' && runner.arch == 'ARM64')"
         uses: actions/setup-python@v4
         with:
           python-version: ${{ env.PYTHON_VERSION }}
+
+      - name: Check Python
+        if: runner.os == 'Linux' && runner.arch == 'ARM64'
+        id: check-python
+        continue-on-error: true
+        run: |
+          python --version
+          python -m ensurepip --version
+          echo "python-version=$(python --version | cut -d " " -f2)" >> $GITHUB_OUTPUT
+
+      - name: Install Python
+        if: >
+          runner.os == 'Linux' && runner.arch == 'ARM64' &&
+          (
+            steps.check-python.outcome	== 'failure' ||
+            !startsWith(steps.check-python.outputs.python-version, env.PYTHON_VERSION)
+          )
+        run: |
+          sudo apt-get update -q -y
+          sudo apt-get install software-properties-common
+          sudo add-apt-repository ppa:deadsnakes/ppa
+          sudo apt-get install -q -y \
+            python${{ env.PYTHON_VERSION }} \
+            python${{ env.PYTHON_VERSION }}-distutils \
+            python${{ env.PYTHON_VERSION }}-venv
+          sudo update-alternatives --install /usr/bin/python python /usr/bin/python${{ env.PYTHON_VERSION }} 1
 
       - name: Setup Node
         if: startsWith(matrix.build-type, 'wasm')
