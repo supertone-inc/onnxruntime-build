@@ -10,6 +10,14 @@ OUTPUT_DIR=outputs/static-lib
 ONNXRUNTIME_SOURCE_DIR=onnxruntime
 ONNXRUNTIME_VERSION=${ONNXRUNTIME_VERSION:=$(cat $ONNXRUNTIME_SOURCE_DIR/VERSION_NUMBER)}
 
+case $(uname -s) in
+Darwin) CPU_COUNT=$(sysctl -n hw.physicalcpu) ;;
+Linux) CPU_COUNT=$(grep ^cpu\\scores /proc/cpuinfo | uniq | awk '{print $4}') ;;
+*) CPU_COUNT=$NUMBER_OF_PROCESSORS ;;
+esac
+
+PARALLEL_JOB_COUNT=${PARALLEL_JOB_COUNT:=$CPU_COUNT}
+
 (
     cd $ONNXRUNTIME_SOURCE_DIR
 
@@ -21,24 +29,6 @@ ONNXRUNTIME_VERSION=${ONNXRUNTIME_VERSION:=$(cat $ONNXRUNTIME_SOURCE_DIR/VERSION
     git submodule update --init --depth=1 --recursive
 )
 
-case $(uname -s) in
-Darwin)
-    CPU_COUNT=$(sysctl -n hw.physicalcpu)
-    PARALLEL_JOB_COUNT=${PARALLEL_JOB_COUNT:=$CPU_COUNT}
-    CMAKE_BUILD_OPTIONS="$CMAKE_BUILD_OPTIONS --parallel $PARALLEL_JOB_COUNT"
-    ;;
-Linux)
-    CPU_COUNT=$(grep ^cpu\\scores /proc/cpuinfo | uniq | awk '{print $4}')
-    PARALLEL_JOB_COUNT=${PARALLEL_JOB_COUNT:=$CPU_COUNT}
-    CMAKE_BUILD_OPTIONS="$CMAKE_BUILD_OPTIONS --parallel $PARALLEL_JOB_COUNT"
-    ;;
-*)
-    CPU_COUNT=$NUMBER_OF_PROCESSORS
-    PARALLEL_JOB_COUNT=${PARALLEL_JOB_COUNT:=$CPU_COUNT}
-    CMAKE_BUILD_OPTIONS="$CMAKE_BUILD_OPTIONS -- /maxcpucount:$PARALLEL_JOB_COUNT /nodeReuse:False"
-    ;;
-esac
-
 cmake \
     -S $SOURCE_DIR \
     -B $BUILD_DIR \
@@ -47,7 +37,11 @@ cmake \
     -D CMAKE_INSTALL_PREFIX=$OUTPUT_DIR \
     -D ONNXRUNTIME_SOURCE_DIR=$(realpath $ONNXRUNTIME_SOURCE_DIR) \
     $CMAKE_OPTIONS
-cmake --build $BUILD_DIR --config Release $CMAKE_BUILD_OPTIONS
+cmake \
+    --build $BUILD_DIR \
+    --config Release \
+    --parallel $PARALLEL_JOB_COUNT \
+    $CMAKE_BUILD_OPTIONS
 cmake --install $BUILD_DIR --config Release
 
 cmake \
