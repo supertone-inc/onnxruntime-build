@@ -31,6 +31,10 @@ jobs:
             build-type: static-lib
             runs-on: ubuntu-latest
 
+          - target: osx-arm64-static-lib
+            build-type: static-lib
+            runs-on: ghcr.io/cirruslabs/macos-monterey-xcode:latest
+
           - target: osx-x86_64-static-lib
             build-type: static-lib
             runs-on: macos-latest
