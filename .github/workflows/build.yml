@@ -122,6 +122,10 @@ jobs:
             echo ONNXRUNTIME_VERSION=$(cat onnxruntime/VERSION_NUMBER) >> $GITHUB_ENV
           fi
 
+      - name: Set parallel job count
+        if: runner.os == 'Linux' && runner.arch == 'ARM64'
+        run: echo PARALLEL_JOB_COUNT=2 >> $GITHUB_ENV
+
       - name: Build
         run: ./build-${{ matrix.build-type }}.sh
 

@@ -24,15 +24,18 @@ ONNXRUNTIME_VERSION=${ONNXRUNTIME_VERSION:=$(cat $ONNXRUNTIME_SOURCE_DIR/VERSION
 case $(uname -s) in
 Darwin)
     CPU_COUNT=$(sysctl -n hw.physicalcpu)
-    CMAKE_BUILD_OPTIONS="--parallel $CPU_COUNT"
+    PARALLEL_JOB_COUNT=${PARALLEL_JOB_COUNT:=$CPU_COUNT}
+    CMAKE_BUILD_OPTIONS="--parallel $PARALLEL_JOB_COUNT"
     ;;
 Linux)
     CPU_COUNT=$(grep ^cpu\\scores /proc/cpuinfo | uniq | awk '{print $4}')
-    CMAKE_BUILD_OPTIONS="--parallel $CPU_COUNT"
+    PARALLEL_JOB_COUNT=${PARALLEL_JOB_COUNT:=$CPU_COUNT}
+    CMAKE_BUILD_OPTIONS="--parallel $PARALLEL_JOB_COUNT"
     ;;
 *)
     CPU_COUNT=$NUMBER_OF_PROCESSORS
-    CMAKE_BUILD_OPTIONS="-- /maxcpucount:$CPU_COUNT /nodeReuse:False"
+    PARALLEL_JOB_COUNT=${PARALLEL_JOB_COUNT:=$CPU_COUNT}
+    CMAKE_BUILD_OPTIONS="-- /maxcpucount:$PARALLEL_JOB_COUNT /nodeReuse:False"
     ;;
 esac
 
