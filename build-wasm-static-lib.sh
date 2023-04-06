@@ -6,7 +6,7 @@ git submodule update --init --depth=1
 
 LIB_NAME=${LIB_NAME:=onnxruntime_webassembly}
 BUILD_DIR=build/wasm-static-lib
-OUTPUT_DIR=${OUTPUT_DIR:=outputs/wasm-static-lib}
+OUTPUT_DIR=${OUTPUT_DIR:=output/wasm-static-lib}
 BUILD_OPTIONS="\
     --build_dir $BUILD_DIR \
     --config Release \

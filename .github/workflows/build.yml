@@ -151,12 +151,12 @@ jobs:
 
       - name: Archive (UNIX)
         if: runner.os != 'Windows'
-        working-directory: outputs/${{ matrix.build-type }}
+        working-directory: output/${{ matrix.build-type }}
         run: tar cvfz ${{ runner.temp }}/${{ env.ARCHIVE_NAME }}.tgz .
 
       - name: Archive (Windows)
         if: runner.os == 'Windows'
-        working-directory: outputs/${{ matrix.build-type }}
+        working-directory: output/${{ matrix.build-type }}
         run: 7z a "${{ runner.temp }}\${{ env.ARCHIVE_NAME }}.zip" .
 
       - name: Upload artifact

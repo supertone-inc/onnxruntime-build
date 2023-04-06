@@ -6,7 +6,7 @@ git submodule update --init --depth=1
 
 SOURCE_DIR=static-lib
 BUILD_DIR=build/static-lib
-OUTPUT_DIR=outputs/static-lib
+OUTPUT_DIR=output/static-lib
 ONNXRUNTIME_SOURCE_DIR=onnxruntime
 ONNXRUNTIME_VERSION=${ONNXRUNTIME_VERSION:=$(cat $ONNXRUNTIME_SOURCE_DIR/VERSION_NUMBER)}
 
