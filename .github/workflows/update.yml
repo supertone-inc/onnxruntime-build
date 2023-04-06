@@ -1,0 +1,43 @@
+name: Update
+
+on:
+  workflow_dispatch:
+  schedule:
+    - cron: "0 0 * * MON"
+
+jobs:
+  update:
+    name: Update
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v3
+        with:
+          ssh-key: ${{ secrets.COMMIT_KEY }}
+          submodules: true
+
+      - name: Get ONNX Runtime versions
+        run: |
+          CURRENT_ONNXRUNTIME_VERSION=$(cat onnxruntime/VERSION_NUMBER)
+          echo CURRENT_ONNXRUNTIME_VERSION=$CURRENT_ONNXRUNTIME_VERSION >> $GITHUB_ENV
+          echo "Current ONNX Runtime Version : $CURRENT_ONNXRUNTIME_VERSION"
+
+          LATEST_ONNXRUNTIME_VERSION=$(curl -sL https://api.github.com/repos/microsoft/onnxruntime/releases/latest | jq -r ".tag_name" | sed "s/^v//")
+          echo LATEST_ONNXRUNTIME_VERSION=$LATEST_ONNXRUNTIME_VERSION >> $GITHUB_ENV
+          echo "Latest ONNX Runtime Version  : $LATEST_ONNXRUNTIME_VERSION"
+
+      - name: Update ONNX Runtime
+        if: env.LATEST_ONNXRUNTIME_VERSION != env.CURRENT_ONNXRUNTIME_VERSION
+        working-directory: onnxruntime
+        run: |
+          git fetch origin tag v$LATEST_ONNXRUNTIME_VERSION
+          git checkout v$LATEST_ONNXRUNTIME_VERSION
+
+      - name: Commit & push
+        if: env.LATEST_ONNXRUNTIME_VERSION != env.CURRENT_ONNXRUNTIME_VERSION
+        run: |
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git commit -am v$LATEST_ONNXRUNTIME_VERSION
+          git tag v$LATEST_ONNXRUNTIME_VERSION
+          git push origin : v$LATEST_ONNXRUNTIME_VERSION
