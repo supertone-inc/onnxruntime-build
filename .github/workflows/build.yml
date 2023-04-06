@@ -72,26 +72,14 @@ jobs:
           cmakeVersion: ${{ vars.CMAKE_VERSION }}
 
       - name: Setup Python
-        if: runner.arch != 'ARM64'
+        id: setup-python
+        continue-on-error: true
         uses: actions/setup-python@v4
         with:
           python-version: ${{ vars.PYTHON_VERSION }}
 
-      - name: Check Python
-        id: check-python
-        continue-on-error: true
-        run: |
-          python --version
-          python -m ensurepip --version
-          echo "python-version=$(python --version | cut -d " " -f2)" >> $GITHUB_OUTPUT
-
-      - name: Install Python (Linux ARM64)
-        if: >
-          runner.os == 'Linux' && runner.arch == 'ARM64' &&
-          (
-            steps.check-python.outcome	== 'failure' ||
-            !startsWith(steps.check-python.outputs.python-version, vars.PYTHON_VERSION)
-          )
+      - name: Install Python (Linux)
+        if: runner.os == 'Linux' && steps.setup-python.outcome	== 'failure'
         run: |
           sudo apt-get update -q -y
           sudo apt-get install software-properties-common
@@ -102,13 +90,8 @@ jobs:
             python${{ vars.PYTHON_VERSION }}-venv
           sudo update-alternatives --install /usr/bin/python python /usr/bin/python${{ vars.PYTHON_VERSION }} 1
 
-      - name: Install Python (macOS ARM64)
-        if: >
-          runner.os == 'macOS' && runner.arch == 'ARM64' &&
-          (
-            steps.check-python.outcome	== 'failure' ||
-            !startsWith(steps.check-python.outputs.python-version, vars.PYTHON_VERSION)
-          )
+      - name: Install Python (macOS)
+        if: runner.os == 'macOS' && steps.setup-python.outcome	== 'failure'
         run: brew install python@${{ vars.PYTHON_VERSION }}
 
       - name: Setup Node
