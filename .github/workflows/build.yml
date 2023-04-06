@@ -113,10 +113,12 @@ jobs:
       - name: Set ONNX Runtime version
         run: |
           if ${{ startsWith(github.ref, 'refs/tags/v') }}; then
-            echo ONNXRUNTIME_VERSION=${GITHUB_REF_NAME#v} >> $GITHUB_ENV
+            ONNXRUNTIME_VERSION=${GITHUB_REF_NAME#v}
           else
-            echo ONNXRUNTIME_VERSION=$(cat onnxruntime/VERSION_NUMBER) >> $GITHUB_ENV
+            ONNXRUNTIME_VERSION=$(cat onnxruntime/VERSION_NUMBER)
           fi
+          echo ONNXRUNTIME_VERSION=$ONNXRUNTIME_VERSION >> $GITHUB_ENV
+          echo "ONNX Runtime Version: $ONNXRUNTIME_VERSION"
 
       - name: Set parallel job count
         if: runner.os == 'Linux' && runner.arch == 'ARM64'
