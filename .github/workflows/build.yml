@@ -63,8 +63,6 @@ jobs:
     steps:
       - name: Checkout
         uses: actions/checkout@v3
-        with:
-          submodules: true
 
       - name: Setup CMake
         uses: lukka/get-cmake@v3.26.0
@@ -115,7 +113,7 @@ jobs:
           if ${{ startsWith(github.ref, 'refs/tags/v') }}; then
             ONNXRUNTIME_VERSION=${GITHUB_REF_NAME#v}
           else
-            ONNXRUNTIME_VERSION=$(cat onnxruntime/VERSION_NUMBER)
+            ONNXRUNTIME_VERSION=$(cat ONNXRUNTIME_VERSION)
           fi
           echo ONNXRUNTIME_VERSION=$ONNXRUNTIME_VERSION >> $GITHUB_ENV
           echo "ONNX Runtime Version: $ONNXRUNTIME_VERSION"

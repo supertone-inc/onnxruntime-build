@@ -14,22 +14,23 @@ jobs:
         uses: actions/checkout@v3
         with:
           ssh-key: ${{ secrets.UPDATE_DEPLOY_KEY }}
-          submodules: true
 
       - name: Get ONNX Runtime versions
         run: |
-          CURRENT_ONNXRUNTIME_VERSION=$(cat onnxruntime/VERSION_NUMBER)
+          CURRENT_ONNXRUNTIME_VERSION=$(cat ONNXRUNTIME_VERSION)
           echo CURRENT_ONNXRUNTIME_VERSION=$CURRENT_ONNXRUNTIME_VERSION >> $GITHUB_ENV
           echo "Current ONNX Runtime Version : $CURRENT_ONNXRUNTIME_VERSION"
 
-          LATEST_ONNXRUNTIME_VERSION=$(curl -sL https://api.github.com/repos/microsoft/onnxruntime/releases/latest | jq -r ".tag_name" | sed "s/^v//")
+          LATEST_ONNXRUNTIME_VERSION=$(curl -sL https://api.github.com/repos/microsoft/onnxruntime/releases/latest | jq -r '.tag_name' | sed 's/^v//')
           echo LATEST_ONNXRUNTIME_VERSION=$LATEST_ONNXRUNTIME_VERSION >> $GITHUB_ENV
           echo "Latest ONNX Runtime Version  : $LATEST_ONNXRUNTIME_VERSION"
 
       - name: Update ONNX Runtime
         if: env.LATEST_ONNXRUNTIME_VERSION != env.CURRENT_ONNXRUNTIME_VERSION
-        working-directory: onnxruntime
         run: |
+          echo $LATEST_ONNXRUNTIME_VERSION >> ONNXRUNTIME_VERSION
+          git submodule update --init --depth=1 onnxruntime
+          cd onnxruntime
           git fetch origin tag v$LATEST_ONNXRUNTIME_VERSION
           git checkout v$LATEST_ONNXRUNTIME_VERSION
 

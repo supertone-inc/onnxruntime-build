@@ -2,17 +2,16 @@
 
 set -e
 
-git submodule update --init --depth=1
-
 LIB_NAME=${LIB_NAME:=onnxruntime_webassembly}
 BUILD_DIR=build/wasm-static-lib
 OUTPUT_DIR=${OUTPUT_DIR:=output/wasm-static-lib}
 ONNXRUNTIME_SOURCE_DIR=onnxruntime
-ONNXRUNTIME_VERSION=${ONNXRUNTIME_VERSION:=$(cat $ONNXRUNTIME_SOURCE_DIR/VERSION_NUMBER)}
+ONNXRUNTIME_VERSION=${ONNXRUNTIME_VERSION:=$(cat ONNXRUNTIME_VERSION)}
 EMSDK_DIR=$ONNXRUNTIME_SOURCE_DIR/cmake/external/emsdk
 BUILD_OPTIONS=$BUILD_OPTIONS
 
 (
+    git submodule update --init --depth=1 $ONNXRUNTIME_SOURCE_DIR
     cd $ONNXRUNTIME_SOURCE_DIR
     if [ $ONNXRUNTIME_VERSION != $(cat VERSION_NUMBER) ]; then
         git fetch origin tag v$ONNXRUNTIME_VERSION
