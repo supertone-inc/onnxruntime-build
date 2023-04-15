@@ -166,6 +166,11 @@ jobs:
       - name: Release
         uses: ncipollo/release-action@v1
         with:
+          omitName: true
           body: "Official Release: [ONNX Runtime ${{ github.ref_name }}](https://github.com/microsoft/onnxruntime/releases/tag/${{ github.ref_name }})"
           artifacts: "*/*.*"
           allowUpdates: true
+          omitNameDuringUpdate: true
+          omitBodyDuringUpdate: true
+          omitPrereleaseDuringUpdate: true
+          omitDraftDuringUpdate: false
