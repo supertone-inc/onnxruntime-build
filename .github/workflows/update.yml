@@ -28,7 +28,7 @@ jobs:
       - name: Update ONNX Runtime
         if: env.LATEST_ONNXRUNTIME_VERSION != env.CURRENT_ONNXRUNTIME_VERSION
         run: |
-          echo $LATEST_ONNXRUNTIME_VERSION >> ONNXRUNTIME_VERSION
+          echo $LATEST_ONNXRUNTIME_VERSION > ONNXRUNTIME_VERSION
           git submodule update --init --depth=1 onnxruntime
           cd onnxruntime
           git fetch origin tag v$LATEST_ONNXRUNTIME_VERSION
