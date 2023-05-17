@@ -26,44 +26,68 @@ jobs:
       matrix:
         include:
           - target: linux-aarch64-static-lib
-            build-type: static-lib
             runs-on: buildjet-4vcpu-ubuntu-2204-arm
+            pre-build:
+            build: >
+              PARALLEL_JOB_COUNT=2
+              ./build-static-lib.sh
+            post-build: tar -czvf $ARCHIVE_DIR/$ARCHIVE_NAME.tgz -C $OUTPUT_DIR .
 
           - target: linux-x64-static-lib
-            build-type: static-lib
             runs-on: ubuntu-latest
+            pre-build:
+            build: ./build-static-lib.sh
+            post-build: tar -czvf $ARCHIVE_DIR/$ARCHIVE_NAME.tgz -C $OUTPUT_DIR .
 
           - target: osx-arm64-static-lib
-            build-type: static-lib
             runs-on: ghcr.io/cirruslabs/macos-ventura-xcode:${{ vars.XCODE_VERSION }}
+            pre-build: brew install coreutils
+            build: ./build-static-lib.sh
+            post-build: tar -czvf $ARCHIVE_DIR/$ARCHIVE_NAME.tgz -C $OUTPUT_DIR .
 
           - target: osx-universal2-static-lib
-            build-type: static-lib
             runs-on: ghcr.io/cirruslabs/macos-ventura-xcode:${{ vars.XCODE_VERSION }}
+            pre-build: brew install coreutils
+            build: >
+              CMAKE_OPTIONS="-D CMAKE_OSX_ARCHITECTURES=arm64;x86_64"
+              ./build-static-lib.sh
+            post-build: tar -czvf $ARCHIVE_DIR/$ARCHIVE_NAME.tgz -C $OUTPUT_DIR .
 
           - target: osx-x86_64-static-lib
-            build-type: static-lib
             runs-on: macos-latest
+            pre-build: brew install coreutils
+            build: ./build-static-lib.sh
+            post-build: tar -czvf $ARCHIVE_DIR/$ARCHIVE_NAME.tgz -C $OUTPUT_DIR .
 
           - target: win-x64-static-lib
-            build-type: static-lib
             runs-on: windows-2019
+            pre-build:
+            build: ./build-static-lib.sh
+            post-build: 7z a $ARCHIVE_DIR/$ARCHIVE_NAME.zip $OUTPUT_DIR/*
 
           - target: wasm-static-lib
-            build-type: wasm-static-lib
             runs-on: ubuntu-latest
+            pre-build:
+            build: ./build-wasm-static-lib.sh
+            post-build: tar -czvf $ARCHIVE_DIR/$ARCHIVE_NAME.tgz -C $OUTPUT_DIR .
 
           - target: wasm-static-lib-simd
-            build-type: wasm-static-lib-simd
             runs-on: ubuntu-latest
+            pre-build:
+            build: ./build-wasm-static-lib-simd.sh
+            post-build: tar -czvf $ARCHIVE_DIR/$ARCHIVE_NAME.tgz -C $OUTPUT_DIR .
 
           - target: wasm-static-lib-threaded
-            build-type: wasm-static-lib-threaded
             runs-on: ubuntu-latest
+            pre-build:
+            build: ./build-wasm-static-lib-threaded.sh
+            post-build: tar -czvf $ARCHIVE_DIR/$ARCHIVE_NAME.tgz -C $OUTPUT_DIR .
 
           - target: wasm-static-lib-simd-threaded
-            build-type: wasm-static-lib-simd-threaded
             runs-on: ubuntu-latest
+            pre-build:
+            build: ./build-wasm-static-lib-simd-threaded.sh
+            post-build: tar -czvf $ARCHIVE_DIR/$ARCHIVE_NAME.tgz -C $OUTPUT_DIR .
 
     steps:
       - name: Checkout
@@ -98,7 +122,7 @@ jobs:
         run: brew install python@${{ env.PYTHON_VERSION }}
 
       - name: Setup Node
-        if: startsWith(matrix.build-type, 'wasm')
+        if: startsWith(matrix.target, 'wasm')
         uses: actions/setup-node@v3
         with:
           node-version: ${{ env.NODE_VERSION }}
@@ -109,49 +133,34 @@ jobs:
         with:
           xcode-version: ${{ env.XCODE_VERSION }}
 
-      - name: Install Coreutils
-        if: runner.os == 'macOS'
-        run: brew install coreutils
-
       - name: Set ONNX Runtime version
         run: |
           if ${{ startsWith(github.ref, 'refs/tags/v') }}; then
-            ONNXRUNTIME_VERSION=${GITHUB_REF_NAME#v}
+            echo ONNXRUNTIME_VERSION=${GITHUB_REF_NAME#v} >> $GITHUB_ENV
           else
-            ONNXRUNTIME_VERSION=$(cat ONNXRUNTIME_VERSION)
+            echo ONNXRUNTIME_VERSION=$(cat ONNXRUNTIME_VERSION) >> $GITHUB_ENV
           fi
-          echo ONNXRUNTIME_VERSION=$ONNXRUNTIME_VERSION >> $GITHUB_ENV
-          echo "ONNX Runtime Version: $ONNXRUNTIME_VERSION"
 
-      - name: Set parallel job count
-        if: runner.os == 'Linux' && runner.arch == 'ARM64'
-        run: echo PARALLEL_JOB_COUNT=2 >> $GITHUB_ENV
+      - name: Set environment variables
+        run: |
+          echo OUTPUT_DIR=./output >> $GITHUB_ENV
+          echo ARCHIVE_DIR="${{ runner.temp }}" >> $GITHUB_ENV
+          echo ARCHIVE_NAME=onnxruntime-${{ matrix.target }}-${{ env.ONNXRUNTIME_VERSION }} >> $GITHUB_ENV
 
-      - name: Set Universal 2 build option
-        if: startsWith(matrix.target, 'osx-universal2')
-        run: echo CMAKE_OPTIONS="-D CMAKE_OSX_ARCHITECTURES=arm64;x86_64" >> $GITHUB_ENV
+      - name: Pre-build
+        run: ${{ matrix.pre-build }}
 
       - name: Build
-        run: ./build-${{ matrix.build-type }}.sh
+        run: ${{ matrix.build }}
 
-      - name: Set archive name
-        run: echo ARCHIVE_NAME=onnxruntime-${{ matrix.target }}-${{ env.ONNXRUNTIME_VERSION }} >> $GITHUB_ENV
-
-      - name: Archive (UNIX)
-        if: runner.os != 'Windows'
-        working-directory: output/${{ matrix.build-type }}
-        run: tar cvfz ${{ runner.temp }}/${{ env.ARCHIVE_NAME }}.tgz .
-
-      - name: Archive (Windows)
-        if: runner.os == 'Windows'
-        working-directory: output/${{ matrix.build-type }}
-        run: 7z a "${{ runner.temp }}\${{ env.ARCHIVE_NAME }}.zip" .
+      - name: Post-build
+        run: ${{ matrix.post-build }}
 
       - name: Upload artifact
         uses: actions/upload-artifact@v3
         with:
           name: ${{ env.ARCHIVE_NAME }}
-          path: ${{ runner.temp }}/${{ env.ARCHIVE_NAME }}.*
+          path: ${{ env.ARCHIVE_DIR }}/${{ env.ARCHIVE_NAME }}.*
 
   release:
     name: Release

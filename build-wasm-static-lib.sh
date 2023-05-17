@@ -3,11 +3,11 @@
 set -e
 
 LIB_NAME=${LIB_NAME:=onnxruntime_webassembly}
-BUILD_DIR=build/wasm-static-lib
+BUILD_DIR=${BUILD_DIR:=build/wasm-static-lib}
 OUTPUT_DIR=${OUTPUT_DIR:=output/wasm-static-lib}
-ONNXRUNTIME_SOURCE_DIR=onnxruntime
+ONNXRUNTIME_SOURCE_DIR=${ONNXRUNTIME_SOURCE_DIR:=onnxruntime}
 ONNXRUNTIME_VERSION=${ONNXRUNTIME_VERSION:=$(cat ONNXRUNTIME_VERSION)}
-EMSDK_DIR=$ONNXRUNTIME_SOURCE_DIR/cmake/external/emsdk
+EMSDK_DIR=${EMSDK_DIR:=$ONNXRUNTIME_SOURCE_DIR/cmake/external/emsdk}
 BUILD_OPTIONS=$BUILD_OPTIONS
 
 (
