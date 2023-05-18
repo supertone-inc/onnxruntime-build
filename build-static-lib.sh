@@ -17,6 +17,8 @@ Linux) CPU_COUNT=$(grep ^cpu\\scores /proc/cpuinfo | uniq | awk '{print $4}') ;;
 esac
 PARALLEL_JOB_COUNT=${PARALLEL_JOB_COUNT:=$CPU_COUNT}
 
+cd $(dirname $0)
+
 (
     git submodule update --init --depth=1 $ONNXRUNTIME_SOURCE_DIR
     cd $ONNXRUNTIME_SOURCE_DIR
@@ -33,7 +35,7 @@ cmake \
     -D CMAKE_BUILD_TYPE=Release \
     -D CMAKE_CONFIGURATION_TYPES=Release \
     -D CMAKE_INSTALL_PREFIX=$OUTPUT_DIR \
-    -D ONNXRUNTIME_SOURCE_DIR=$(realpath $ONNXRUNTIME_SOURCE_DIR) \
+    -D ONNXRUNTIME_SOURCE_DIR=$(pwd)/$ONNXRUNTIME_SOURCE_DIR \
     $CMAKE_OPTIONS
 cmake \
     --build $BUILD_DIR \
@@ -45,7 +47,7 @@ cmake --install $BUILD_DIR --config Release
 cmake \
     -S $SOURCE_DIR/tests \
     -B $BUILD_DIR/tests \
-    -D ONNXRUNTIME_SOURCE_DIR=$(realpath $ONNXRUNTIME_SOURCE_DIR) \
-    -D ONNXRUNTIME_LIB_DIR=$(realpath $OUTPUT_DIR/lib)
+    -D ONNXRUNTIME_SOURCE_DIR=$(pwd)/$ONNXRUNTIME_SOURCE_DIR \
+    -D ONNXRUNTIME_LIB_DIR=$(pwd)/$OUTPUT_DIR/lib
 cmake --build $BUILD_DIR/tests
 ctest --test-dir $BUILD_DIR/tests --build-config Debug --verbose --no-tests=error

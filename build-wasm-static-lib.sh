@@ -10,6 +10,8 @@ ONNXRUNTIME_VERSION=${ONNXRUNTIME_VERSION:=$(cat ONNXRUNTIME_VERSION)}
 EMSDK_DIR=${EMSDK_DIR:=$ONNXRUNTIME_SOURCE_DIR/cmake/external/emsdk}
 BUILD_OPTIONS=$BUILD_OPTIONS
 
+cd $(dirname $0)
+
 (
     git submodule update --init --depth=1 $ONNXRUNTIME_SOURCE_DIR
     cd $ONNXRUNTIME_SOURCE_DIR
@@ -49,9 +51,9 @@ esac
 cmake \
     -S wasm-static-lib/tests \
     -B $BUILD_DIR/tests \
-    -D CMAKE_TOOLCHAIN_FILE=$(realpath $EMSDK_DIR/upstream/emscripten/cmake/Modules/Platform/Emscripten.cmake) \
-    -D ONNXRUNTIME_SOURCE_DIR=$(realpath $ONNXRUNTIME_SOURCE_DIR) \
-    -D ONNXRUNTIME_LIB_DIR=$(realpath $OUTPUT_DIR/lib) \
+    -D CMAKE_TOOLCHAIN_FILE=$(pwd)/$EMSDK_DIR/upstream/emscripten/cmake/Modules/Platform/Emscripten.cmake \
+    -D ONNXRUNTIME_SOURCE_DIR=$(pwd)/$ONNXRUNTIME_SOURCE_DIR \
+    -D ONNXRUNTIME_LIB_DIR=$(pwd)/$OUTPUT_DIR/lib \
     $CMAKE_OPTIONS
 cmake --build $BUILD_DIR/tests
 ctest --test-dir $BUILD_DIR/tests --verbose --no-tests=error

@@ -27,7 +27,6 @@ jobs:
         include:
           - target: linux-aarch64-static-lib
             runs-on: buildjet-4vcpu-ubuntu-2204-arm
-            pre-build:
             build: >
               PARALLEL_JOB_COUNT=2
               ./build-static-lib.sh
@@ -35,19 +34,16 @@ jobs:
 
           - target: linux-x64-static-lib
             runs-on: ubuntu-latest
-            pre-build:
             build: ./build-static-lib.sh
             post-build: tar -czvf $ARCHIVE_DIR/$ARCHIVE_NAME.tgz -C $OUTPUT_DIR .
 
           - target: osx-arm64-static-lib
             runs-on: ghcr.io/cirruslabs/macos-ventura-xcode:${{ vars.XCODE_VERSION }}
-            pre-build: brew install coreutils
             build: ./build-static-lib.sh
             post-build: tar -czvf $ARCHIVE_DIR/$ARCHIVE_NAME.tgz -C $OUTPUT_DIR .
 
           - target: osx-universal2-static-lib
             runs-on: ghcr.io/cirruslabs/macos-ventura-xcode:${{ vars.XCODE_VERSION }}
-            pre-build: brew install coreutils
             build: >
               CMAKE_OPTIONS="-D CMAKE_OSX_ARCHITECTURES=arm64;x86_64"
               ./build-static-lib.sh
@@ -55,37 +51,31 @@ jobs:
 
           - target: osx-x86_64-static-lib
             runs-on: macos-latest
-            pre-build: brew install coreutils
             build: ./build-static-lib.sh
             post-build: tar -czvf $ARCHIVE_DIR/$ARCHIVE_NAME.tgz -C $OUTPUT_DIR .
 
           - target: win-x64-static-lib
             runs-on: windows-2019
-            pre-build:
             build: ./build-static-lib.sh
             post-build: 7z a $ARCHIVE_DIR/$ARCHIVE_NAME.zip $OUTPUT_DIR/*
 
           - target: wasm-static-lib
             runs-on: ubuntu-latest
-            pre-build:
             build: ./build-wasm-static-lib.sh
             post-build: tar -czvf $ARCHIVE_DIR/$ARCHIVE_NAME.tgz -C $OUTPUT_DIR .
 
           - target: wasm-static-lib-simd
             runs-on: ubuntu-latest
-            pre-build:
             build: ./build-wasm-static-lib-simd.sh
             post-build: tar -czvf $ARCHIVE_DIR/$ARCHIVE_NAME.tgz -C $OUTPUT_DIR .
 
           - target: wasm-static-lib-threaded
             runs-on: ubuntu-latest
-            pre-build:
             build: ./build-wasm-static-lib-threaded.sh
             post-build: tar -czvf $ARCHIVE_DIR/$ARCHIVE_NAME.tgz -C $OUTPUT_DIR .
 
           - target: wasm-static-lib-simd-threaded
             runs-on: ubuntu-latest
-            pre-build:
             build: ./build-wasm-static-lib-simd-threaded.sh
             post-build: tar -czvf $ARCHIVE_DIR/$ARCHIVE_NAME.tgz -C $OUTPUT_DIR .
 
@@ -147,13 +137,10 @@ jobs:
           echo ARCHIVE_DIR="${{ runner.temp }}" >> $GITHUB_ENV
           echo ARCHIVE_NAME=onnxruntime-${{ matrix.target }}-${{ env.ONNXRUNTIME_VERSION }} >> $GITHUB_ENV
 
-      - name: Pre-build
-        run: ${{ matrix.pre-build }}
-
       - name: Build
         run: ${{ matrix.build }}
 
-      - name: Post-build
+      - name: Post build
         run: ${{ matrix.post-build }}
 
       - name: Upload artifact
