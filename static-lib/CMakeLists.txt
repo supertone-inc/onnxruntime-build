@@ -8,6 +8,10 @@ set(onnxruntime_BUILD_SHARED_LIB ON)
 
 add_subdirectory(${ONNXRUNTIME_SOURCE_DIR}/cmake onnxruntime EXCLUDE_FROM_ALL)
 get_target_property(libraries onnxruntime LINK_LIBRARIES)
+
+string(REPLACE ";" "\n" libraries_newline_separated "${libraries}")
+file(WRITE ${CMAKE_CURRENT_BINARY_DIR}/libraries.txt "${libraries_newline_separated}")
+
 list(REMOVE_ITEM libraries
     dl
     Threads::Threads
@@ -27,6 +31,9 @@ list(REMOVE_ITEM libraries
     Microsoft.GSL::GSL
     date_interface
 )
+
+string(REPLACE ";" "\n" libraries_newline_separated "${libraries}")
+file(WRITE ${CMAKE_CURRENT_BINARY_DIR}/libraries_filtered.txt "${libraries_newline_separated}")
 
 include(bundle_static_library.cmake)
 bundle_static_library(${PROJECT_NAME} ${libraries})
