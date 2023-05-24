@@ -53,6 +53,14 @@ function(bundle_static_library bundled_target_name)
 
     list(REMOVE_DUPLICATES static_libs)
 
+    foreach(static_lib IN LISTS static_libs)
+        file(APPEND ${CMAKE_BINARY_DIR}/static_libs.txt.in "${static_lib}\n")
+    endforeach()
+
+    file(GENERATE
+        OUTPUT static_libs.txt
+        INPUT ${CMAKE_BINARY_DIR}/static_libs.txt.in)
+
     set(bundled_target_full_name
         ${CMAKE_BINARY_DIR}/${CMAKE_STATIC_LIBRARY_PREFIX}${bundled_target_name}${CMAKE_STATIC_LIBRARY_SUFFIX})
 

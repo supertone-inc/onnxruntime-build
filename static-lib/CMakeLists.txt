@@ -7,16 +7,9 @@ set(protobuf_MSVC_STATIC_RUNTIME ON)
 set(onnxruntime_BUILD_SHARED_LIB ON)
 
 add_subdirectory(${ONNXRUNTIME_SOURCE_DIR}/cmake onnxruntime EXCLUDE_FROM_ALL)
-get_target_property(libraries onnxruntime LINK_LIBRARIES)
-
-string(REPLACE ";" "\n" libraries_newline_separated "${libraries}")
-file(WRITE ${CMAKE_CURRENT_BINARY_DIR}/libraries.txt "${libraries_newline_separated}")
-
-string(REPLACE ";" "\n" libraries_newline_separated "${libraries}")
-file(WRITE ${CMAKE_CURRENT_BINARY_DIR}/libraries_filtered.txt "${libraries_newline_separated}")
 
 include(bundle_static_library.cmake)
-bundle_static_library(${PROJECT_NAME} ${libraries})
+bundle_static_library(${PROJECT_NAME} onnxruntime)
 
 install(
     FILES
