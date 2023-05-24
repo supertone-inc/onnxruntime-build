@@ -3,12 +3,19 @@
 # - https://cristianadam.eu/20190501/bundling-together-static-libraries-with-cmake
 
 function(bundle_static_library bundled_target_name)
+    set(extension_blocklist
+        .dylib
+        .so
+        .dll
+        .tbd
+    )
+
     function(recursively_collect_dependencies input_target)
         if(NOT TARGET ${input_target})
             if(EXISTS ${input_target})
                 get_filename_component(extension "${input_target}" EXT)
 
-                if(NOT extension STREQUAL ".tbd")
+                if(NOT extension IN_LIST extension_blocklist)
                     list(APPEND static_libs "${input_target}")
                     set(static_libs ${static_libs} PARENT_SCOPE)
                 endif()
