@@ -59,15 +59,15 @@ function(bundle_static_library bundled_target_name)
     set(static_libs ${static_libs} PARENT_SCOPE)
 
     foreach(static_lib IN LISTS static_libs)
-        file(APPEND ${CMAKE_BINARY_DIR}/static_libs.txt.in "${static_lib}\n")
+        file(APPEND ${CMAKE_CURRENT_BINARY_DIR}/static_libs.txt.in "${static_lib}\n")
     endforeach()
 
     file(GENERATE
         OUTPUT static_libs.txt
-        INPUT ${CMAKE_BINARY_DIR}/static_libs.txt.in)
+        INPUT ${CMAKE_CURRENT_BINARY_DIR}/static_libs.txt.in)
 
     set(bundled_target_full_name
-        ${CMAKE_BINARY_DIR}/${CMAKE_STATIC_LIBRARY_PREFIX}${bundled_target_name}${CMAKE_STATIC_LIBRARY_SUFFIX})
+        ${CMAKE_CURRENT_BINARY_DIR}/${CMAKE_STATIC_LIBRARY_PREFIX}${bundled_target_name}${CMAKE_STATIC_LIBRARY_SUFFIX})
 
     if(MSVC)
         set(lib ${CMAKE_AR})
@@ -84,20 +84,20 @@ function(bundle_static_library bundled_target_name)
             COMMENT "Bundling ${bundled_target_name}"
             VERBATIM)
     else()
-        file(WRITE ${CMAKE_BINARY_DIR}/${bundled_target_name}.ar.in
+        file(WRITE ${CMAKE_CURRENT_BINARY_DIR}/${bundled_target_name}.ar.in
             "CREATE ${bundled_target_full_name}\n")
 
         foreach(static_lib IN LISTS static_libs)
-            file(APPEND ${CMAKE_BINARY_DIR}/${bundled_target_name}.ar.in
+            file(APPEND ${CMAKE_CURRENT_BINARY_DIR}/${bundled_target_name}.ar.in
                 "ADDLIB ${static_lib}\n")
         endforeach()
 
-        file(APPEND ${CMAKE_BINARY_DIR}/${bundled_target_name}.ar.in "SAVE\n")
-        file(APPEND ${CMAKE_BINARY_DIR}/${bundled_target_name}.ar.in "END\n")
+        file(APPEND ${CMAKE_CURRENT_BINARY_DIR}/${bundled_target_name}.ar.in "SAVE\n")
+        file(APPEND ${CMAKE_CURRENT_BINARY_DIR}/${bundled_target_name}.ar.in "END\n")
 
         file(GENERATE
-            OUTPUT ${CMAKE_BINARY_DIR}/${bundled_target_name}.ar
-            INPUT ${CMAKE_BINARY_DIR}/${bundled_target_name}.ar.in)
+            OUTPUT ${CMAKE_CURRENT_BINARY_DIR}/${bundled_target_name}.ar
+            INPUT ${CMAKE_CURRENT_BINARY_DIR}/${bundled_target_name}.ar.in)
 
         set(ar ${CMAKE_AR})
 
@@ -106,7 +106,7 @@ function(bundle_static_library bundled_target_name)
         endif()
 
         add_custom_command(
-            COMMAND ${ar} -M < ${CMAKE_BINARY_DIR}/${bundled_target_name}.ar
+            COMMAND ${ar} -M < ${CMAKE_CURRENT_BINARY_DIR}/${bundled_target_name}.ar
             OUTPUT ${bundled_target_full_name}
             COMMENT "Bundling ${bundled_target_name}"
             VERBATIM)
