@@ -112,11 +112,11 @@ function(bundle_static_library bundled_target_name)
             VERBATIM)
     endif()
 
-    add_custom_target(bundling_target ALL DEPENDS ${bundled_target_full_name})
+    add_custom_target(bundling_${bundled_target_name} ALL DEPENDS ${bundled_target_full_name})
 
     foreach(target_name IN ITEMS ${ARGN})
         if(TARGET ${target_name})
-            add_dependencies(bundling_target ${target_name})
+            add_dependencies(bundling_${bundled_target_name} ${target_name})
         endif()
     endforeach()
 
@@ -132,5 +132,5 @@ function(bundle_static_library bundled_target_name)
             PROPERTY INTERFACE_COMPILE_DEFINITIONS $<TARGET_PROPERTY:${target_name},INTERFACE_COMPILE_DEFINITIONS>)
     endforeach()
 
-    add_dependencies(${bundled_target_name} bundling_target)
+    add_dependencies(${bundled_target_name} bundling_${bundled_target_name})
 endfunction()
