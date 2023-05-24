@@ -12,26 +12,6 @@ get_target_property(libraries onnxruntime LINK_LIBRARIES)
 string(REPLACE ";" "\n" libraries_newline_separated "${libraries}")
 file(WRITE ${CMAKE_CURRENT_BINARY_DIR}/libraries.txt "${libraries_newline_separated}")
 
-list(REMOVE_ITEM libraries
-    dl
-    Threads::Threads
-    absl::inlined_vector
-    absl::flat_hash_set
-    absl::flat_hash_map
-    absl::node_hash_set
-    absl::node_hash_map
-    $<$<CONFIG:DEBUG>:Dbghelp>
-
-    # v1.14.1
-    rt
-    WIL::WIL
-    nlohmann_json::nlohmann_json
-    Boost::mp11
-    safeint_interface
-    Microsoft.GSL::GSL
-    date_interface
-)
-
 string(REPLACE ";" "\n" libraries_newline_separated "${libraries}")
 file(WRITE ${CMAKE_CURRENT_BINARY_DIR}/libraries_filtered.txt "${libraries_newline_separated}")
 
