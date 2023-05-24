@@ -9,7 +9,7 @@ function(bundle_static_library bundled_target_name)
                 get_filename_component(extension "${input_target}" EXT)
 
                 if(NOT extension STREQUAL ".tbd")
-                    list(APPEND static_libs ${input_target})
+                    list(APPEND static_libs "${input_target}")
                     set(static_libs ${static_libs} PARENT_SCOPE)
                 endif()
             endif()
