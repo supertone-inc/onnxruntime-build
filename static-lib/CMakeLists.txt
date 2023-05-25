@@ -16,25 +16,11 @@ install(
     ${ONNXRUNTIME_SOURCE_DIR}/include/onnxruntime/core/session/onnxruntime_c_api.h
     ${ONNXRUNTIME_SOURCE_DIR}/include/onnxruntime/core/session/onnxruntime_cxx_api.h
     ${ONNXRUNTIME_SOURCE_DIR}/include/onnxruntime/core/session/onnxruntime_cxx_inline.h
-    DESTINATION include
+    TYPE INCLUDE
 )
 
-if(UNIX)
-    file(STRINGS ${ONNXRUNTIME_SOURCE_DIR}/VERSION_NUMBER ONNXRUNTIME_VERSION)
-    install(
-        FILES ${CMAKE_CURRENT_BINARY_DIR}/lib${PROJECT_NAME}.a
-        RENAME libonnxruntime.${ONNXRUNTIME_VERSION}.a
-        DESTINATION lib
-    )
-    install(CODE "execute_process( \
-        COMMAND ${CMAKE_COMMAND} -E create_symlink \
-        libonnxruntime.${ONNXRUNTIME_VERSION}.a \
-        ${CMAKE_INSTALL_PREFIX}/lib/libonnxruntime.a \
-    )")
-else()
-    install(
-        FILES ${CMAKE_CURRENT_BINARY_DIR}/${PROJECT_NAME}.lib
-        RENAME onnxruntime.lib
-        DESTINATION lib
-    )
-endif()
+install(
+    FILES ${CMAKE_CURRENT_BINARY_DIR}/${CMAKE_STATIC_LIBRARY_PREFIX}${PROJECT_NAME}${CMAKE_STATIC_LIBRARY_SUFFIX}
+    RENAME ${CMAKE_STATIC_LIBRARY_PREFIX}onnxruntime${CMAKE_STATIC_LIBRARY_SUFFIX}
+    TYPE LIB
+)
