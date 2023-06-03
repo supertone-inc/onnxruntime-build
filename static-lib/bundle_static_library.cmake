@@ -65,6 +65,8 @@ function(bundle_static_library bundled_target_name)
     list(REMOVE_DUPLICATES static_libs)
     set(static_libs ${static_libs} PARENT_SCOPE)
 
+    file(WRITE ${CMAKE_CURRENT_BINARY_DIR}/static_libs.txt.in)
+
     foreach(static_lib IN LISTS static_libs)
         file(APPEND ${CMAKE_CURRENT_BINARY_DIR}/static_libs.txt.in "${static_lib}\n")
     endforeach()
