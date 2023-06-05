@@ -76,14 +76,14 @@ jobs:
               ./build-wasm-static-lib.sh
             post-build: tar -czvf $ARCHIVE_DIR/$ARCHIVE_NAME.tgz -C $OUTPUT_DIR .
 
-          - target: wasm-static-lib-threaded
+          - target: wasm-static-lib-threads
             runs-on: ubuntu-latest
             build: >
               BUILD_OPTIONS="--enable_wasm_threads"
               ./build-wasm-static-lib.sh
             post-build: tar -czvf $ARCHIVE_DIR/$ARCHIVE_NAME.tgz -C $OUTPUT_DIR .
 
-          - target: wasm-static-lib-simd-threaded
+          - target: wasm-static-lib-simd-threads
             runs-on: ubuntu-latest
             build: >
               BUILD_OPTIONS="--enable_wasm_simd --enable_wasm_threads"
