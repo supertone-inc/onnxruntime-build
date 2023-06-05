@@ -18,11 +18,11 @@ Currently supports static library builds only with the default options.
 Build for native:
 
 ```sh
-./build-static-lib.sh
+./build-static_lib.sh
 ```
 
 Build for Wasm:
 
 ```sh
-./build-wasm-static-lib.sh
+./build-wasm-static_lib.sh
 ```

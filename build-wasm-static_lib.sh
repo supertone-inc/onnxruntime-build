@@ -2,8 +2,8 @@
 
 set -e
 
-BUILD_DIR=${BUILD_DIR:=build/wasm-static-lib}
-OUTPUT_DIR=${OUTPUT_DIR:=output/wasm-static-lib}
+BUILD_DIR=${BUILD_DIR:=build/wasm-static_lib}
+OUTPUT_DIR=${OUTPUT_DIR:=output/wasm-static_lib}
 ONNXRUNTIME_SOURCE_DIR=${ONNXRUNTIME_SOURCE_DIR:=onnxruntime}
 ONNXRUNTIME_VERSION=${ONNXRUNTIME_VERSION:=$(cat ONNXRUNTIME_VERSION)}
 EMSDK_DIR=${EMSDK_DIR:=$ONNXRUNTIME_SOURCE_DIR/cmake/external/emsdk}
@@ -47,7 +47,7 @@ Darwin | Linux) ;;
 esac
 
 cmake \
-    -S wasm-static-lib/tests \
+    -S wasm-static_lib/tests \
     -B $BUILD_DIR/tests \
     -D CMAKE_TOOLCHAIN_FILE=$(pwd)/$EMSDK_DIR/upstream/emscripten/cmake/Modules/Platform/Emscripten.cmake \
     -D ONNXRUNTIME_SOURCE_DIR=$(pwd)/$ONNXRUNTIME_SOURCE_DIR \
