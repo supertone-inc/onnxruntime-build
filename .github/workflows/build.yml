@@ -71,17 +71,26 @@ jobs:
 
           - target: wasm-static-lib-simd
             runs-on: ubuntu-latest
-            build: ./build-wasm-static-lib-simd.sh
+            build: >
+              LIB_NAME=onnxruntime_webassembly_simd
+              BUILD_OPTIONS="--enable_wasm_simd"
+              ./build-wasm-static-lib.sh
             post-build: tar -czvf $ARCHIVE_DIR/$ARCHIVE_NAME.tgz -C $OUTPUT_DIR .
 
           - target: wasm-static-lib-threaded
             runs-on: ubuntu-latest
-            build: ./build-wasm-static-lib-threaded.sh
+            build: >
+              LIB_NAME=onnxruntime_webassembly_threaded
+              BUILD_OPTIONS="--enable_wasm_threads"
+              ./build-wasm-static-lib.sh
             post-build: tar -czvf $ARCHIVE_DIR/$ARCHIVE_NAME.tgz -C $OUTPUT_DIR .
 
           - target: wasm-static-lib-simd-threaded
             runs-on: ubuntu-latest
-            build: ./build-wasm-static-lib-simd-threaded.sh
+            build: >
+              LIB_NAME=onnxruntime_webassembly_simd_threaded
+              BUILD_OPTIONS="--enable_wasm_simd --enable_wasm_threads"
+              ./build-wasm-static-lib.sh
             post-build: tar -czvf $ARCHIVE_DIR/$ARCHIVE_NAME.tgz -C $OUTPUT_DIR .
 
     steps:

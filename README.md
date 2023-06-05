@@ -25,7 +25,4 @@ Build for Wasm:
 
 ```sh
 ./build-wasm-static-lib.sh
-./build-wasm-static-lib-simd.sh # with SIMD support
-./build-wasm-static-lib-threaded.sh # with multi-thread support
-./build-wasm-static-lib-simd-threaded.sh # with SIMD and multi-thread support
 ```
