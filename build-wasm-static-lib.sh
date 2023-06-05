@@ -40,8 +40,8 @@ cp $ONNXRUNTIME_SOURCE_DIR/include/onnxruntime/core/session/onnxruntime_cxx_api.
 cp $ONNXRUNTIME_SOURCE_DIR/include/onnxruntime/core/session/onnxruntime_cxx_inline.h $OUTPUT_DIR/include
 
 mkdir -p $OUTPUT_DIR/lib
-cp $BUILD_DIR/Release/libonnxruntime_webassembly.a $OUTPUT_DIR/lib/lib$LIB_NAME.$ONNXRUNTIME_VERSION.a
-ln -sf lib$LIB_NAME.$ONNXRUNTIME_VERSION.a $OUTPUT_DIR/lib/libonnxruntime.a
+cp $BUILD_DIR/Release/libonnxruntime_webassembly.a $OUTPUT_DIR/lib/lib$LIB_NAME.a
+ln -sf lib$LIB_NAME.a $OUTPUT_DIR/lib/libonnxruntime.a
 
 case $(uname -s) in
 Darwin | Linux) ;;
