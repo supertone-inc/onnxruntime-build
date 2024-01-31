@@ -61,7 +61,7 @@ jobs:
             post-build: tar -czvf $ARCHIVE_DIR/$ARCHIVE_NAME.tgz -C $OUTPUT_DIR .
 
           - target: win-x64-static_lib
-            runs-on: windows-2019
+            runs-on: windows-2022
             build: ./build-static_lib.sh
             post-build: 7z a $ARCHIVE_DIR/$ARCHIVE_NAME.zip $OUTPUT_DIR/*
 
