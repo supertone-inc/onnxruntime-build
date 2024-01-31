@@ -36,6 +36,7 @@ cmake \
     -D CMAKE_CONFIGURATION_TYPES=Release \
     -D CMAKE_INSTALL_PREFIX=$OUTPUT_DIR \
     -D ONNXRUNTIME_SOURCE_DIR=$(pwd)/$ONNXRUNTIME_SOURCE_DIR \
+    --compile-no-warning-as-error \
     $CMAKE_OPTIONS
 cmake \
     --build $BUILD_DIR \
