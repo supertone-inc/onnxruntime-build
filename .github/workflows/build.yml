@@ -164,7 +164,7 @@ jobs:
         run: ${{ matrix.post-build }}
 
       - name: Upload artifact
-        uses: actions/upload-artifact@v3
+        uses: actions/upload-artifact@v4
         with:
           name: ${{ env.ARCHIVE_NAME }}
           path: ${{ env.ARCHIVE_DIR }}/${{ env.ARCHIVE_NAME }}.*
