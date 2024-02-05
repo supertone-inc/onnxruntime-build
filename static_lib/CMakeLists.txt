@@ -14,11 +14,10 @@ include(bundle_static_library.cmake)
 bundle_static_library(${PROJECT_NAME} onnxruntime)
 
 install(
-    FILES
-    ${ONNXRUNTIME_SOURCE_DIR}/include/onnxruntime/core/session/onnxruntime_c_api.h
-    ${ONNXRUNTIME_SOURCE_DIR}/include/onnxruntime/core/session/onnxruntime_cxx_api.h
-    ${ONNXRUNTIME_SOURCE_DIR}/include/onnxruntime/core/session/onnxruntime_cxx_inline.h
-    TYPE INCLUDE
+    DIRECTORY ${ONNXRUNTIME_SOURCE_DIR}/include/onnxruntime/core/session/
+    DESTINATION include/
+    FILES_MATCHING
+    PATTERN "*.h"
 )
 
 install(
