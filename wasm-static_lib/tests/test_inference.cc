@@ -5,7 +5,7 @@
 #include <onnxruntime_cxx_api.h>
 
 TEST(InferenceTest, test) {
-  Ort::Env ort_env;
+  Ort::Env ort_env{Ort::ThreadingOptions{}};
   Ort::Session session{ort_env, ORT_TSTR("testdata/mul_1.onnx"), Ort::SessionOptions{nullptr}};
   auto memory_info = Ort::MemoryInfo::CreateCpu(OrtDeviceAllocator, OrtMemTypeCPU);
 

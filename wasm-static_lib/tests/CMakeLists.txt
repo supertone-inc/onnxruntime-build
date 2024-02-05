@@ -4,6 +4,7 @@ project(tests)
 add_executable(${PROJECT_NAME} test_inference.cc)
 
 set_target_properties(${PROJECT_NAME} PROPERTIES LINK_FLAGS "\
+    -s NO_DISABLE_EXCEPTION_CATCHING=1 \
     -s ALLOW_MEMORY_GROWTH=1 \
     -s \"EXPORTED_RUNTIME_METHODS=['FS']\" \
     --preload-file ${ONNXRUNTIME_SOURCE_DIR}/onnxruntime/test/testdata@/testdata \
