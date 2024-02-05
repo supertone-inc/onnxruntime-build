@@ -49,6 +49,7 @@ cmake \
     -S $SOURCE_DIR/tests \
     -B $BUILD_DIR/tests \
     -D ONNXRUNTIME_SOURCE_DIR=$(pwd)/$ONNXRUNTIME_SOURCE_DIR \
+    -D ONNXRUNTIME_INCLUDE_DIR=$(pwd)/$OUTPUT_DIR/include \
     -D ONNXRUNTIME_LIB_DIR=$(pwd)/$OUTPUT_DIR/lib
 cmake --build $BUILD_DIR/tests
 ctest --test-dir $BUILD_DIR/tests --build-config Debug --verbose --no-tests=error

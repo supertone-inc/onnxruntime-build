@@ -49,6 +49,7 @@ cmake \
     -B $BUILD_DIR/tests \
     -D CMAKE_TOOLCHAIN_FILE=$(pwd)/$EMSDK_DIR/upstream/emscripten/cmake/Modules/Platform/Emscripten.cmake \
     -D ONNXRUNTIME_SOURCE_DIR=$(pwd)/$ONNXRUNTIME_SOURCE_DIR \
+    -D ONNXRUNTIME_INCLUDE_DIR=$(pwd)/$OUTPUT_DIR/include \
     -D ONNXRUNTIME_LIB_DIR=$(pwd)/$OUTPUT_DIR/lib \
     $CMAKE_OPTIONS
 cmake --build $BUILD_DIR/tests
