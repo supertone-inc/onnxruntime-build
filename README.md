@@ -9,7 +9,7 @@ Currently supports static library builds only with the default options.
 ### Prerequisites
 
 - [Requirements for building ONNX Runtime for inferencing](https://onnxruntime.ai/docs/build/inferencing.html#prerequisites) (for native build)
-- [Requirements for building ONNX Runtime for Web](https://onnxruntime.ai/docs/build/inferencing.html#prerequisites) (for Wasm build)
+- [Requirements for building ONNX Runtime for Web](https://onnxruntime.ai/docs/build/web.html#prerequisites) (for Wasm build)
 - Bash
   - On Windows, you can use Git Bash provided by [Git for Windows](https://git-scm.com/download/win).
 
