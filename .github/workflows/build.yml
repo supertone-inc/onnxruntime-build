@@ -39,7 +39,7 @@ jobs:
             post-build: tar -czvf $ARCHIVE_DIR/$ARCHIVE_NAME.tgz -C $OUTPUT_DIR .
 
           - target: linux-x64-static_lib
-            runs-on: ubuntu-latest
+            runs-on: ubuntu-22.04
             build: ./build-static_lib.sh
             post-build: tar -czvf $ARCHIVE_DIR/$ARCHIVE_NAME.tgz -C $OUTPUT_DIR .
 
@@ -66,26 +66,26 @@ jobs:
             post-build: 7z a $ARCHIVE_DIR/$ARCHIVE_NAME.zip $OUTPUT_DIR/*
 
           - target: wasm-static_lib
-            runs-on: ubuntu-latest
+            runs-on: ubuntu-22.04
             build: ./build-wasm-static_lib.sh
             post-build: tar -czvf $ARCHIVE_DIR/$ARCHIVE_NAME.tgz -C $OUTPUT_DIR .
 
           - target: wasm-static_lib-simd
-            runs-on: ubuntu-latest
+            runs-on: ubuntu-22.04
             build: >
               BUILD_OPTIONS="--enable_wasm_simd"
               ./build-wasm-static_lib.sh
             post-build: tar -czvf $ARCHIVE_DIR/$ARCHIVE_NAME.tgz -C $OUTPUT_DIR .
 
           - target: wasm-static_lib-threads
-            runs-on: ubuntu-latest
+            runs-on: ubuntu-22.04
             build: >
               BUILD_OPTIONS="--enable_wasm_threads"
               ./build-wasm-static_lib.sh
             post-build: tar -czvf $ARCHIVE_DIR/$ARCHIVE_NAME.tgz -C $OUTPUT_DIR .
 
           - target: wasm-static_lib-simd-threads
-            runs-on: ubuntu-latest
+            runs-on: ubuntu-22.04
             build: >
               BUILD_OPTIONS="--enable_wasm_simd --enable_wasm_threads"
               ./build-wasm-static_lib.sh
@@ -173,7 +173,7 @@ jobs:
     name: Release
     if: startsWith(github.ref, 'refs/tags/v')
     needs: build
-    runs-on: ubuntu-latest
+    runs-on: ubuntu-22.04
     permissions:
       contents: write
 
