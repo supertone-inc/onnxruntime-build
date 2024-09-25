@@ -11,7 +11,7 @@ on:
       - v*.*.*
 
 env:
-  GCC_VERSION: 10
+  GCC_VERSION: 11
   CMAKE_VERSION: 3.26
   PYTHON_VERSION: 3.9
   NODE_VERSION: 20
