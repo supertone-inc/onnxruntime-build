@@ -13,11 +13,11 @@ add_subdirectory(${ONNXRUNTIME_SOURCE_DIR}/cmake onnxruntime EXCLUDE_FROM_ALL)
 include(bundle_static_library.cmake)
 bundle_static_library(${PROJECT_NAME} onnxruntime)
 
+get_target_property(public_header onnxruntime PUBLIC_HEADER)
+
 install(
-    DIRECTORY ${ONNXRUNTIME_SOURCE_DIR}/include/onnxruntime/core/session/
-    DESTINATION include/
-    FILES_MATCHING
-    PATTERN "*.h"
+    FILES ${public_header}
+    TYPE INCLUDE
 )
 
 install(
