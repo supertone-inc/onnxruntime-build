@@ -13,10 +13,8 @@ add_subdirectory(${ONNXRUNTIME_SOURCE_DIR}/cmake onnxruntime EXCLUDE_FROM_ALL)
 include(bundle_static_library.cmake)
 bundle_static_library(${PROJECT_NAME} onnxruntime)
 
-get_target_property(public_header onnxruntime PUBLIC_HEADER)
-
 install(
-    FILES ${public_header}
+    FILES $<TARGET_PROPERTY:onnxruntime,PUBLIC_HEADER>
     TYPE INCLUDE
 )
 
