@@ -1,6 +1,11 @@
 cmake_minimum_required(VERSION 3.26)
 project(onnxruntime_static_lib)
 
+set(CMAKE_POLICY_DEFAULT_CMP0063 NEW)
+set(CMAKE_C_VISIBILITY_PRESET hidden)
+set(CMAKE_CXX_VISIBILITY_PRESET hidden)
+set(CMAKE_VISIBILITY_INLINES_HIDDEN ON)
+
 set(C_HEADER_FILE ${ONNXRUNTIME_SOURCE_DIR}/include/onnxruntime/core/session/onnxruntime_c_api.h)
 file(COPY_FILE ${C_HEADER_FILE} ${C_HEADER_FILE}.bak)
 file(READ ${C_HEADER_FILE} C_HEADER_CONTENTS)
