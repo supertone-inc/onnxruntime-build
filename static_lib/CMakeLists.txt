@@ -14,7 +14,7 @@ set(ONNX_USE_MSVC_STATIC_RUNTIME ON)
 set(protobuf_MSVC_STATIC_RUNTIME ON)
 
 # Set ONNX Runtime options
-set(onnxruntime_BUILD_SHARED_LIB OFF)
+set(onnxruntime_BUILD_SHARED_LIB ON)
 
 # Suppress C++23 deprecation warnings
 add_compile_definitions(_SILENCE_ALL_CXX23_DEPRECATION_WARNINGS)
