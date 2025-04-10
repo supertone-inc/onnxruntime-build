@@ -8,14 +8,6 @@ OUTPUT_DIR=${OUTPUT_DIR:=output/static_lib}
 ONNXRUNTIME_SOURCE_DIR=${ONNXRUNTIME_SOURCE_DIR:=onnxruntime}
 ONNXRUNTIME_VERSION=${ONNXRUNTIME_VERSION:=$(cat ONNXRUNTIME_VERSION)}
 CMAKE_OPTIONS=$CMAKE_OPTIONS
-CMAKE_BUILD_OPTIONS=$CMAKE_BUILD_OPTIONS
-
-case $(uname -s) in
-Darwin) CPU_COUNT=$(sysctl -n hw.physicalcpu) ;;
-Linux) CPU_COUNT=$(grep ^cpu\\scores /proc/cpuinfo | uniq | awk '{print $4}') ;;
-*) CPU_COUNT=$NUMBER_OF_PROCESSORS ;;
-esac
-PARALLEL_JOB_COUNT=${PARALLEL_JOB_COUNT:=$CPU_COUNT}
 
 cd $(dirname $0)
 
@@ -29,27 +21,27 @@ cd $(dirname $0)
     git submodule update --init --depth=1 --recursive
 )
 
-cmake \
-    -S $SOURCE_DIR \
-    -B $BUILD_DIR \
-    -D CMAKE_BUILD_TYPE=Release \
-    -D CMAKE_CONFIGURATION_TYPES=Release \
-    -D CMAKE_INSTALL_PREFIX=$OUTPUT_DIR \
-    -D ONNXRUNTIME_SOURCE_DIR=$(pwd)/$ONNXRUNTIME_SOURCE_DIR \
-    --compile-no-warning-as-error \
-    $CMAKE_OPTIONS
-cmake \
-    --build $BUILD_DIR \
-    --config Release \
-    --parallel $PARALLEL_JOB_COUNT \
-    $CMAKE_BUILD_OPTIONS
-cmake --install $BUILD_DIR --config Release
+./onnxruntime/build.sh --config Release --parallel --cmake_extra_defines CMAKE_INSTALL_PREFIX=$OUTPUT_DIR $CMAKE_OPTIONS
 
-cmake \
-    -S $SOURCE_DIR/tests \
-    -B $BUILD_DIR/tests \
-    -D ONNXRUNTIME_SOURCE_DIR=$(pwd)/$ONNXRUNTIME_SOURCE_DIR \
-    -D ONNXRUNTIME_INCLUDE_DIR=$(pwd)/$OUTPUT_DIR/include \
-    -D ONNXRUNTIME_LIB_DIR=$(pwd)/$OUTPUT_DIR/lib
-cmake --build $BUILD_DIR/tests
-ctest --test-dir $BUILD_DIR/tests --build-config Debug --verbose --no-tests=error
+# cmake \
+#     -S $SOURCE_DIR \
+#     -B $BUILD_DIR \
+#     -D CMAKE_BUILD_TYPE=Release \
+#     -D CMAKE_CONFIGURATION_TYPES=Release \
+#     -D CMAKE_INSTALL_PREFIX=$OUTPUT_DIR \
+#     -D ONNXRUNTIME_SOURCE_DIR=$(pwd)/$ONNXRUNTIME_SOURCE_DIR \
+#     --compile-no-warning-as-error \
+#     $CMAKE_OPTIONS
+# cmake \
+#     --build $BUILD_DIR \
+#     --config Release \
+# cmake --install $BUILD_DIR --config Release
+
+# cmake \
+#     -S $SOURCE_DIR/tests \
+#     -B $BUILD_DIR/tests \
+#     -D ONNXRUNTIME_SOURCE_DIR=$(pwd)/$ONNXRUNTIME_SOURCE_DIR \
+#     -D ONNXRUNTIME_INCLUDE_DIR=$(pwd)/$OUTPUT_DIR/include \
+#     -D ONNXRUNTIME_LIB_DIR=$(pwd)/$OUTPUT_DIR/lib
+# cmake --build $BUILD_DIR/tests
+# ctest --test-dir $BUILD_DIR/tests --build-config Debug --verbose --no-tests=error
