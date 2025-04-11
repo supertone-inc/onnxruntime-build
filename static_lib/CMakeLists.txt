@@ -12,10 +12,12 @@ file(WRITE ${C_HEADER_FILE} "${MODIFIED_C_HEADER_CONTENTS}")
 set(CMAKE_MSVC_RUNTIME_LIBRARY MultiThreaded)
 set(ONNX_USE_MSVC_STATIC_RUNTIME ON)
 set(protobuf_MSVC_STATIC_RUNTIME ON)
+set(ABSL_MSVC_STATIC_RUNTIME ON)
+
+set(CMAKE_OSX_DEPLOYMENT_TARGET 13.4)
 
 # Set ONNX Runtime options
-set(onnxruntime_BUILD_SHARED_LIB ON)
-
+set(onnxruntime_BUILD_SHARED_LIB OFF)
 # Suppress C++23 deprecation warnings
 add_compile_definitions(_SILENCE_ALL_CXX23_DEPRECATION_WARNINGS)
 
@@ -24,11 +26,37 @@ add_subdirectory(${ONNXRUNTIME_SOURCE_DIR}/cmake onnxruntime EXCLUDE_FROM_ALL)
 
 # Bundle the static library
 include(bundle_static_library.cmake)
-bundle_static_library(${PROJECT_NAME} onnxruntime)
+bundle_static_library(${PROJECT_NAME} 
+    onnxruntime_session
+    onnxruntime_optimizer
+    onnxruntime_providers
+    onnxruntime_util
+    onnxruntime_framework
+    onnxruntime_graph
+    onnxruntime_mlas
+    onnxruntime_common
+    onnxruntime_flatbuffers
+    onnx_test_data_proto
+    onnx
+    onnx_proto
+    libprotobuf-lite
+    re2
+    absl_base
+    absl_throw_delegate
+    absl_raw_hash_set
+    absl_hash
+    absl_city
+    absl_low_level_hash
+    cpuinfo
+)
 
 # Install the static library
 install(
-    FILES $<TARGET_PROPERTY:onnxruntime,PUBLIC_HEADER>
+    FILES 
+    ${ONNXRUNTIME_SOURCE_DIR}/include/onnxruntime/core/session/onnxruntime_c_api.h
+    ${ONNXRUNTIME_SOURCE_DIR}/include/onnxruntime/core/session/onnxruntime_cxx_api.h
+    ${ONNXRUNTIME_SOURCE_DIR}/include/onnxruntime/core/session/onnxruntime_float16.h
+    ${ONNXRUNTIME_SOURCE_DIR}/include/onnxruntime/core/session/onnxruntime_cxx_inline.h
     TYPE INCLUDE
 )
 install(

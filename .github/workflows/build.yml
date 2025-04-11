@@ -51,7 +51,7 @@ jobs:
           - target: osx-universal2-static_lib
             runs-on: macos-13-xlarge
             build: >
-              CMAKE_OPTIONS="-D CMAKE_OSX_ARCHITECTURES=arm64;x86_64"
+              CMAKE_OPTIONS="CMAKE_OSX_ARCHITECTURES=arm64;x86_64"
               ./build-static_lib.sh
             post-build: tar -czvf $ARCHIVE_DIR/$ARCHIVE_NAME.tgz -C $OUTPUT_DIR .
 
