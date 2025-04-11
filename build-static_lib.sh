@@ -8,14 +8,6 @@ OUTPUT_DIR=${OUTPUT_DIR:=output/static_lib}
 ONNXRUNTIME_SOURCE_DIR=${ONNXRUNTIME_SOURCE_DIR:=onnxruntime}
 ONNXRUNTIME_VERSION=${ONNXRUNTIME_VERSION:=$(cat ONNXRUNTIME_VERSION)}
 CMAKE_OPTIONS=$CMAKE_OPTIONS
-CMAKE_BUILD_OPTIONS=$CMAKE_BUILD_OPTIONS
-
-case $(uname -s) in
-Darwin) CPU_COUNT=$(sysctl -n hw.physicalcpu) ;;
-Linux) CPU_COUNT=$(grep ^cpu\\scores /proc/cpuinfo | uniq | awk '{print $4}') ;;
-*) CPU_COUNT=$NUMBER_OF_PROCESSORS ;;
-esac
-PARALLEL_JOB_COUNT=${PARALLEL_JOB_COUNT:=$CPU_COUNT}
 
 cd $(dirname $0)
 
@@ -41,8 +33,8 @@ cmake \
 cmake \
     --build $BUILD_DIR \
     --config Release \
-    --parallel $PARALLEL_JOB_COUNT \
-    $CMAKE_BUILD_OPTIONS
+    -j4
+    
 cmake --install $BUILD_DIR --config Release
 
 cmake \
