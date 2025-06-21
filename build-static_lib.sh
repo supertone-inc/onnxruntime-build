@@ -6,7 +6,7 @@ SOURCE_DIR=${SOURCE_DIR:=static_lib}
 BUILD_DIR=${BUILD_DIR:=build/static_lib}
 OUTPUT_DIR=${OUTPUT_DIR:=output/static_lib}
 ONNXRUNTIME_SOURCE_DIR=${ONNXRUNTIME_SOURCE_DIR:=onnxruntime}
-ONNXRUNTIME_VERSION=${ONNXRUNTIME_VERSION:=$(cat ONNXRUNTIME_VERSION)}
+# ONNXRUNTIME_VERSION=${ONNXRUNTIME_VERSION:=$(cat ONNXRUNTIME_VERSION)}
 CMAKE_OPTIONS=$CMAKE_OPTIONS
 
 cd $(dirname $0)
@@ -14,10 +14,12 @@ cd $(dirname $0)
 (
     git submodule update --init --depth=1 $ONNXRUNTIME_SOURCE_DIR
     cd $ONNXRUNTIME_SOURCE_DIR
-    if [ $ONNXRUNTIME_VERSION != $(cat VERSION_NUMBER) ]; then
-        git fetch origin tag v$ONNXRUNTIME_VERSION
-        git checkout v$ONNXRUNTIME_VERSION
-    fi
+    # if [ $ONNXRUNTIME_VERSION != $(cat VERSION_NUMBER) ]; then
+    #     git fetch origin tag v$ONNXRUNTIME_VERSION
+    #     git checkout v$ONNXRUNTIME_VERSION
+    # fi
+    git fetch origin main
+    git checkout main
     git submodule update --init --depth=1 --recursive
 )
 
