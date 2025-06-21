@@ -78,6 +78,11 @@ jobs:
       - name: Checkout
         uses: actions/checkout@v4
 
+      - name: Configure Git
+        run: |
+          git config --global user.name "GitHub Actions"
+          git config --global user.email "actions@github.com"
+
       - name: Setup GCC
         if: runner.os == 'Linux'
         uses: egor-tensin/setup-gcc@v1
