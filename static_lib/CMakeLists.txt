@@ -24,9 +24,8 @@ add_compile_definitions(_SILENCE_ALL_CXX23_DEPRECATION_WARNINGS)
 # Add ONNX Runtime
 add_subdirectory(${ONNXRUNTIME_SOURCE_DIR}/cmake onnxruntime EXCLUDE_FROM_ALL)
 
-# Bundle the static library
-include(bundle_static_library.cmake)
-bundle_static_library(${PROJECT_NAME} 
+# Prepare the library list for bundling
+set(BUNDLE_LIBS
     onnxruntime_session
     onnxruntime_optimizer
     onnxruntime_providers
@@ -49,6 +48,26 @@ bundle_static_library(${PROJECT_NAME}
     absl_low_level_hash
     cpuinfo
 )
+
+# Add architecture-specific MLAS libraries for universal builds
+if(APPLE AND CMAKE_OSX_ARCHITECTURES)
+    list(LENGTH CMAKE_OSX_ARCHITECTURES ARCH_COUNT)
+    if(ARCH_COUNT GREATER 1)
+        # This is a universal build, add architecture-specific MLAS libraries
+        if("arm64" IN_LIST CMAKE_OSX_ARCHITECTURES AND TARGET onnxruntime_mlas_arm64)
+            list(APPEND BUNDLE_LIBS onnxruntime_mlas_arm64)
+            message(STATUS "Adding onnxruntime_mlas_arm64 to bundle")
+        endif()
+        if("x86_64" IN_LIST CMAKE_OSX_ARCHITECTURES AND TARGET onnxruntime_mlas_x86_64)
+            list(APPEND BUNDLE_LIBS onnxruntime_mlas_x86_64)
+            message(STATUS "Adding onnxruntime_mlas_x86_64 to bundle")
+        endif()
+    endif()
+endif()
+
+# Bundle the static library
+include(bundle_static_library.cmake)
+bundle_static_library(${PROJECT_NAME} ${BUNDLE_LIBS})
 
 # Install the static library
 install(
