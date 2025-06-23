@@ -29,7 +29,7 @@ jobs:
         if: env.LATEST_ONNXRUNTIME_VERSION != env.CURRENT_ONNXRUNTIME_VERSION
         run: |
           echo $LATEST_ONNXRUNTIME_VERSION > ONNXRUNTIME_VERSION
-          git submodule update --init --depth=1 onnxruntime
+          git submodule update --init --remote --depth=1 onnxruntime
           cd onnxruntime
           git fetch origin tag v$LATEST_ONNXRUNTIME_VERSION
           git checkout v$LATEST_ONNXRUNTIME_VERSION
@@ -41,4 +41,4 @@ jobs:
           git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
           git commit -am v$LATEST_ONNXRUNTIME_VERSION
           git tag v$LATEST_ONNXRUNTIME_VERSION
-          git push origin : v$LATEST_ONNXRUNTIME_VERSION
+          git push origin v$LATEST_ONNXRUNTIME_VERSION
