@@ -8,8 +8,8 @@ file(READ ${C_HEADER_FILE} C_HEADER_CONTENTS)
 string(REPLACE "__attribute__((visibility(\"default\")))" "__attribute__((visibility(\"hidden\")))" MODIFIED_C_HEADER_CONTENTS "${C_HEADER_CONTENTS}")
 file(WRITE ${C_HEADER_FILE} "${MODIFIED_C_HEADER_CONTENTS}")
 
-# Set MSVC runtime library
-set(CMAKE_MSVC_RUNTIME_LIBRARY MultiThreaded)
+# Set MSVC runtime library based on build configuration
+set(CMAKE_MSVC_RUNTIME_LIBRARY "MultiThreaded$<$<CONFIG:Debug>:Debug>")
 set(ONNX_USE_MSVC_STATIC_RUNTIME ON)
 set(protobuf_MSVC_STATIC_RUNTIME ON)
 set(ABSL_MSVC_STATIC_RUNTIME ON)
