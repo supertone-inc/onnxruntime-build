@@ -2,8 +2,9 @@
 
 set -e
 
-BUILD_DIR=${BUILD_DIR:=build/wasm-static_lib}
-OUTPUT_DIR=${OUTPUT_DIR:=output/wasm-static_lib}
+BUILD_CONFIG=${BUILD_CONFIG:=Release}
+BUILD_DIR=${BUILD_DIR:=build/wasm-static_lib/$BUILD_CONFIG}
+OUTPUT_DIR=${OUTPUT_DIR:=output/wasm-static_lib/$BUILD_CONFIG}
 ONNXRUNTIME_SOURCE_DIR=${ONNXRUNTIME_SOURCE_DIR:=onnxruntime}
 ONNXRUNTIME_VERSION=${ONNXRUNTIME_VERSION:=$(cat ONNXRUNTIME_VERSION)}
 EMSDK_DIR=${EMSDK_DIR:=$ONNXRUNTIME_SOURCE_DIR/cmake/external/emsdk}
@@ -21,11 +22,11 @@ cd $(dirname $0)
     git submodule update --init --depth=1 --recursive
 )
 
-rm -f $BUILD_DIR/Release/libonnxruntime_webassembly.a
+rm -f $BUILD_DIR/$BUILD_CONFIG/libonnxruntime_webassembly.a
 
 $ONNXRUNTIME_SOURCE_DIR/build.sh \
     --build_dir $BUILD_DIR \
-    --config Release \
+    --config $BUILD_CONFIG \
     --build_wasm_static_lib \
     --enable_wasm_simd \
     --enable_wasm_threads \
@@ -39,7 +40,7 @@ mkdir -p $OUTPUT_DIR/include
 cp $ONNXRUNTIME_SOURCE_DIR/include/onnxruntime/core/session/*.h $OUTPUT_DIR/include
 
 mkdir -p $OUTPUT_DIR/lib
-cp $BUILD_DIR/Release/libonnxruntime_webassembly.a $OUTPUT_DIR/lib/libonnxruntime.a
+cp $BUILD_DIR/$BUILD_CONFIG/libonnxruntime_webassembly.a $OUTPUT_DIR/lib/libonnxruntime.a
 
 case $(uname -s) in
 Darwin | Linux) ;;

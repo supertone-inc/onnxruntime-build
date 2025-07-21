@@ -3,8 +3,9 @@
 set -e
 
 SOURCE_DIR=${SOURCE_DIR:=static_lib}
-BUILD_DIR=${BUILD_DIR:=build/static_lib}
-OUTPUT_DIR=${OUTPUT_DIR:=output/static_lib}
+BUILD_CONFIG=${BUILD_CONFIG:=Release}
+BUILD_DIR=${BUILD_DIR:=build/static_lib/$BUILD_CONFIG}
+OUTPUT_DIR=${OUTPUT_DIR:=output/static_lib/$BUILD_CONFIG}
 ONNXRUNTIME_SOURCE_DIR=${ONNXRUNTIME_SOURCE_DIR:=onnxruntime}
 ONNXRUNTIME_VERSION=${ONNXRUNTIME_VERSION:=$(cat ONNXRUNTIME_VERSION)}
 CMAKE_OPTIONS=$CMAKE_OPTIONS
@@ -24,18 +25,18 @@ cd $(dirname $0)
 cmake \
     -S $SOURCE_DIR \
     -B $BUILD_DIR \
-    -D CMAKE_BUILD_TYPE=Release \
-    -D CMAKE_CONFIGURATION_TYPES=Release \
+    -D CMAKE_BUILD_TYPE=$BUILD_CONFIG \
+    -D CMAKE_CONFIGURATION_TYPES=$BUILD_CONFIG \
     -D CMAKE_INSTALL_PREFIX=$OUTPUT_DIR \
     -D ONNXRUNTIME_SOURCE_DIR=$(pwd)/$ONNXRUNTIME_SOURCE_DIR \
     --compile-no-warning-as-error \
     $CMAKE_OPTIONS
 cmake \
     --build $BUILD_DIR \
-    --config Release \
+    --config $BUILD_CONFIG \
     -j4
     
-cmake --install $BUILD_DIR --config Release
+cmake --install $BUILD_DIR --config $BUILD_CONFIG
 
 cmake \
     -S $SOURCE_DIR/tests \
@@ -44,4 +45,4 @@ cmake \
     -D ONNXRUNTIME_INCLUDE_DIR=$(pwd)/$OUTPUT_DIR/include \
     -D ONNXRUNTIME_LIB_DIR=$(pwd)/$OUTPUT_DIR/lib
 cmake --build $BUILD_DIR/tests
-ctest --test-dir $BUILD_DIR/tests --build-config Debug --verbose --no-tests=error
+ctest --test-dir $BUILD_DIR/tests --build-config $BUILD_CONFIG --verbose --no-tests=error
