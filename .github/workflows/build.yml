@@ -33,7 +33,7 @@ jobs:
         include:
           - target: linux-aarch64-static_lib
             config: Debug
-            runs-on: buildjet-4vcpu-ubuntu-2204-arm
+            runs-on: buildjet-8vcpu-ubuntu-2204-arm
             build: >
               PARALLEL_JOB_COUNT=2
               BUILD_CONFIG=Debug
