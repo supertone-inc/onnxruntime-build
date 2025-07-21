@@ -18,10 +18,6 @@ cd $(dirname $0)
         git fetch origin tag v$ONNXRUNTIME_VERSION
         git checkout v$ONNXRUNTIME_VERSION
     fi
-    git config user.name "Build Script"
-    git config user.email "build@example.com"
-    git fetch origin f57db79743c4d1a3553aa05cf95bcd10966030e6
-    git cherry-pick f57db79743c4d1a3553aa05cf95bcd10966030e6
     git submodule update --init --depth=1 --recursive
 )
 
