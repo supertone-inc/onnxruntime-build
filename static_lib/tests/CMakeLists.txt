@@ -1,7 +1,8 @@
 cmake_minimum_required(VERSION 3.28)
 project(tests)
 
-set(CMAKE_MSVC_RUNTIME_LIBRARY MultiThreaded)
+# Set MSVC runtime library based on build configuration
+set(CMAKE_MSVC_RUNTIME_LIBRARY "MultiThreaded$<$<CONFIG:Debug>:Debug>")
 
 add_executable(${PROJECT_NAME} test_inference.cc)
 
