@@ -60,6 +60,12 @@ jobs:
             runs-on: windows-2022
             build: BUILD_CONFIG=Release ./build-static_lib.sh
             post-build: 7z a $ARCHIVE_DIR/$ARCHIVE_NAME.zip $OUTPUT_DIR/*
+            
+          - target: win-x64-static_lib
+            config: Debug
+            runs-on: windows-2022
+            build: BUILD_CONFIG=Debug ./build-static_lib.sh
+            post-build: 7z a $ARCHIVE_DIR/$ARCHIVE_NAME.zip $OUTPUT_DIR/*
 
           - target: wasm-static_lib-simd-threaded
             config: Release
@@ -136,7 +142,11 @@ jobs:
         run: |
           echo OUTPUT_DIR=./output >> $GITHUB_ENV
           echo ARCHIVE_DIR="${{ runner.temp }}" >> $GITHUB_ENV
-          echo ARCHIVE_NAME=onnxruntime-${{ matrix.target }}-${{ env.ONNXRUNTIME_VERSION }} >> $GITHUB_ENV
+          if [ "${{ matrix.config }}" == "Debug" ]; then
+            echo ARCHIVE_NAME=onnxruntime-${{ matrix.target }}-${{ env.ONNXRUNTIME_VERSION }}-Debug >> $GITHUB_ENV
+          else
+            echo ARCHIVE_NAME=onnxruntime-${{ matrix.target }}-${{ env.ONNXRUNTIME_VERSION }} >> $GITHUB_ENV
+          fi
 
       - name: Build
         run: ${{ matrix.build }}
