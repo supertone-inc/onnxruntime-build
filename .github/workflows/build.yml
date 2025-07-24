@@ -65,7 +65,7 @@ jobs:
             config: Debug
             runs-on: windows-2022
             build: >
-              CMAKE_OPTIONS="-DMSVC_RUNTIME_LIBRARY=MultiThreadedDebug"
+              CMAKE_OPTIONS="-DCMAKE_MSVC_RUNTIME_LIBRARY=MultiThreadedDebug"
               BUILD_CONFIG=Debug ./build-static_lib.sh
             post-build: 7z a $ARCHIVE_DIR/$ARCHIVE_NAME.zip $OUTPUT_DIR/*
 
