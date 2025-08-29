@@ -21,6 +21,12 @@ set(onnxruntime_BUILD_SHARED_LIB OFF)
 # Suppress C++23 deprecation warnings
 add_compile_definitions(_SILENCE_ALL_CXX23_DEPRECATION_WARNINGS)
 
+# Enable Position Independent Code for better compatibility
+if(UNIX AND NOT APPLE)
+    set(CMAKE_POSITION_INDEPENDENT_CODE ON)
+    add_compile_options(-fPIC)
+endif()
+
 # Add ONNX Runtime
 add_subdirectory(${ONNXRUNTIME_SOURCE_DIR}/cmake onnxruntime EXCLUDE_FROM_ALL)
 

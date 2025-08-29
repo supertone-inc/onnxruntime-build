@@ -35,6 +35,7 @@ jobs:
             config: Release
             runs-on: buildjet-4vcpu-ubuntu-2204-arm
             build: >
+              CMAKE_OPTIONS="-DCMAKE_POSITION_INDEPENDENT_CODE=ON"
               PARALLEL_JOB_COUNT=2
               BUILD_CONFIG=Release
               ./build-static_lib.sh
@@ -43,7 +44,10 @@ jobs:
           - target: linux-x64-static_lib
             config: Release
             runs-on: ubuntu-22.04
-            build: BUILD_CONFIG=Release ./build-static_lib.sh
+            build: >
+              CMAKE_OPTIONS="-DCMAKE_POSITION_INDEPENDENT_CODE=ON"
+              BUILD_CONFIG=Release
+              ./build-static_lib.sh
             post-build: tar -czvf $ARCHIVE_DIR/$ARCHIVE_NAME.tgz -C $OUTPUT_DIR .
 
           - target: osx-universal2-static_lib
