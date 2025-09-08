@@ -124,7 +124,7 @@ jobs:
 
       - name: Setup Node
         if: startsWith(matrix.target, 'wasm')
-        uses: actions/setup-node@v4
+        uses: actions/setup-node@v5
         with:
           node-version: ${{ env.NODE_VERSION }}
 
