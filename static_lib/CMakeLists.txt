@@ -18,6 +18,7 @@ set(CMAKE_OSX_DEPLOYMENT_TARGET 13.4)
 
 # Set ONNX Runtime options
 set(onnxruntime_BUILD_SHARED_LIB OFF)
+set(onnxruntime_ENABLE_INSTALL OFF)
 # Suppress C++23 deprecation warnings
 add_compile_definitions(_SILENCE_ALL_CXX23_DEPRECATION_WARNINGS)
 

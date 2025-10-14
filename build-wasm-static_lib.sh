@@ -29,8 +29,9 @@ $ONNXRUNTIME_SOURCE_DIR/build.sh \
     --config $BUILD_CONFIG \
     --build_wasm_static_lib \
     --enable_wasm_simd \
-    --skip_tests \
+    --disable_wasm_exception_catching \
     --disable_rtti \
+    --skip_tests \
     --parallel \
     $BUILD_OPTIONS
 
