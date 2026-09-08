@@ -1,6 +1,10 @@
 cmake_minimum_required(VERSION 3.28)
 project(tests)
 
+# ONNX Runtime headers (>= 1.25) use noexcept in function-pointer typedefs, which requires C++17
+set(CMAKE_CXX_STANDARD 17)
+set(CMAKE_CXX_STANDARD_REQUIRED ON)
+
 add_executable(${PROJECT_NAME} test_inference.cc)
 
 set_target_properties(${PROJECT_NAME} PROPERTIES LINK_FLAGS "\

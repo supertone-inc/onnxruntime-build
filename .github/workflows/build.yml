@@ -15,7 +15,7 @@ env:
   CMAKE_VERSION: 3.28
   PYTHON_VERSION: 3.11
   NODE_VERSION: 20
-  XCODE_VERSION: 14.2
+  XCODE_VERSION: 15.4
   MACOSX_DEPLOYMENT_TARGET: 10.15
 
 defaults:
@@ -33,7 +33,7 @@ jobs:
         include:
           - target: linux-aarch64-static_lib
             config: Release
-            runs-on: buildjet-4vcpu-ubuntu-2204-arm
+            runs-on: ubuntu-22.04-arm
             build: >
               CMAKE_OPTIONS="-DCMAKE_POSITION_INDEPENDENT_CODE=ON"
               PARALLEL_JOB_COUNT=2
@@ -52,7 +52,7 @@ jobs:
 
           - target: osx-universal2-static_lib
             config: Release
-            runs-on: macos-13-xlarge
+            runs-on: macos-14
             build: >
               CMAKE_OPTIONS="-DCMAKE_OSX_ARCHITECTURES=arm64;x86_64"
               BUILD_CONFIG=Release

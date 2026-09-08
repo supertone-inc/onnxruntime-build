@@ -1,6 +1,10 @@
 cmake_minimum_required(VERSION 3.28)
 project(tests)
 
+# ONNX Runtime headers (>= 1.25) use noexcept in function-pointer typedefs, which requires C++17
+set(CMAKE_CXX_STANDARD 17)
+set(CMAKE_CXX_STANDARD_REQUIRED ON)
+
 # Set MSVC runtime library based on build configuration
 set(CMAKE_MSVC_RUNTIME_LIBRARY "MultiThreaded$<$<CONFIG:Debug>:Debug>")
 
